@@ -2,6 +2,7 @@ package xyz.bluepitaya.d3force.forces
 
 import xyz.bluepitaya.d3force.Force
 import xyz.bluepitaya.d3force.Node
+import xyz.bluepitaya.d3force.quadtree.Quad
 
 object ManyBody {
   case class Options(
@@ -21,4 +22,8 @@ object ManyBody {
   def force(options: Options = defaultOptions)(
       nodes: Seq[Node]
   ): Node => Force = ???
+
+  private def accumulate(quad: Quad): Quad = {
+    ???
+  }
 }

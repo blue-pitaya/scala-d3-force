@@ -8,27 +8,23 @@ import xyz.bluepitaya.d3force.Vec2f
 class QuadTreeOpsSpec extends AnyFlatSpec with Matchers {
   def sut = QuadTreeOps
 
-  val exampleRegion = Region(Vec2f(0, 0), Vec2f(128, 128))
-
-  def exampleQuadTree = {
-    val node3 = Node(Map(
-      BottomLeft -> Leaf(Vec2f(65, 80), List("E")),
-      BottomRight -> Leaf(Vec2f(80, 90), List("F"))
-    ))
-    val node2 = Node(Map(TopLeft -> node3))
-    val node1 = Node(Map(
-      TopLeft -> Leaf(Vec2f(70, 10), List("C")),
-      BottomLeft -> Leaf(Vec2f(69, 50), List("D", "D2"))
-    ))
-    val node0 = Node(Map(
-      TopLeft -> Leaf(Vec2f(40, 45), List("A")),
-      TopRight -> node1,
-      BottomLeft -> Leaf(Vec2f(15, 70), List("B")),
-      BottomRight -> node2
-    ))
-
-    QuadTree(exampleRegion, Some(node0))
-  }
+  private val exampleRegion = Region(Vec2f(0, 0), Vec2f(128, 128))
+  private val node3 = Node(Map(
+    BottomLeft -> Leaf(Vec2f(65, 80), List("E")),
+    BottomRight -> Leaf(Vec2f(80, 90), List("F"))
+  ))
+  private val node2 = Node(Map(TopLeft -> node3))
+  private val node1 = Node(Map(
+    TopLeft -> Leaf(Vec2f(70, 10), List("C")),
+    BottomLeft -> Leaf(Vec2f(69, 50), List("D", "D2"))
+  ))
+  private val node0 = Node(Map(
+    TopLeft -> Leaf(Vec2f(40, 45), List("A")),
+    TopRight -> node1,
+    BottomLeft -> Leaf(Vec2f(15, 70), List("B")),
+    BottomRight -> node2
+  ))
+  private def exampleQuadTree = QuadTree(exampleRegion, Some(node0))
 
   "adding example" should "be ok" in {
     val tree = QuadTree(exampleRegion, None)
@@ -67,21 +63,59 @@ class QuadTreeOpsSpec extends AnyFlatSpec with Matchers {
     }
   }
 
-  "visit leafs" should "be ok" in {
-    val expected = List(
-      Quad(Vec2f(40, 45), List("A"), Region(Vec2f(0, 0), Vec2f(64, 64))),
-      Quad(Vec2f(70, 10), List("C"), Region(Vec2f(64, 0), Vec2f(96, 32))),
+
+  "visit" should "be ok" in {
+    val expected = List[Quad](
+      Quad(node0, Region.square(0, 0, 128)),
+      Quad(Leaf(Vec2f(40, 45), List("A")), Region(Vec2f(0, 0), Vec2f(64, 64))),
+      Quad(node1, Region.square(64, 0, 64)),
+      Quad(Leaf(Vec2f(70, 10), List("C")), Region(Vec2f(64, 0), Vec2f(96, 32))),
       Quad(
-        Vec2f(69, 50),
-        List("D", "D2"),
+        Leaf(Vec2f(69, 50), List("D", "D2")),
         Region(Vec2f(64, 32), Vec2f(96, 64))
       ),
-      Quad(Vec2f(15, 70), List("B"), Region(Vec2f(0, 64), Vec2f(64, 128))),
-      Quad(Vec2f(65, 80), List("E"), Region(Vec2f(64, 80), Vec2f(80, 96))),
-      Quad(Vec2f(80, 90), List("F"), Region(Vec2f(80, 80), Vec2f(96, 96)))
+      Quad(
+        Leaf(Vec2f(15, 70), List("B")),
+        Region(Vec2f(0, 64), Vec2f(64, 128))
+      ),
+      Quad(node2, Region.square(64, 64, 64)),
+      Quad(node3, Region.square(64, 64, 32)),
+      Quad(
+        Leaf(Vec2f(65, 80), List("E")),
+        Region(Vec2f(64, 80), Vec2f(80, 96))
+      ),
+      Quad(Leaf(Vec2f(80, 90), List("F")), Region(Vec2f(80, 80), Vec2f(96, 96)))
     )
-    var result = sut.visitLeafs(exampleQuadTree)
 
-    result shouldEqual expected
+    sut.visit(exampleQuadTree) shouldEqual expected
+  }
+
+  "visitAfter" should "be ok" in {
+    val expected = List[Quad](
+      Quad(Leaf(Vec2f(40, 45), List("A")), Region(Vec2f(0, 0), Vec2f(64, 64))),
+      Quad(Leaf(Vec2f(70, 10), List("C")), Region(Vec2f(64, 0), Vec2f(96, 32))),
+      Quad(
+        Leaf(Vec2f(69, 50), List("D", "D2")),
+        Region(Vec2f(64, 32), Vec2f(96, 64))
+      ),
+      Quad(node1, Region.square(64, 0, 64)),
+      Quad(
+        Leaf(Vec2f(15, 70), List("B")),
+        Region(Vec2f(0, 64), Vec2f(64, 128))
+      ),
+      Quad(
+        Leaf(Vec2f(65, 80), List("E")),
+        Region(Vec2f(64, 80), Vec2f(80, 96))
+      ),
+      Quad(
+        Leaf(Vec2f(80, 90), List("F")),
+        Region(Vec2f(80, 80), Vec2f(96, 96))
+      ),
+      Quad(node3, Region.square(64, 64, 32)),
+      Quad(node2, Region.square(64, 64, 64)),
+      Quad(node0, Region.square(0, 0, 128))
+    )
+
+    sut.visitAfter(exampleQuadTree) shouldEqual expected
   }
 }
