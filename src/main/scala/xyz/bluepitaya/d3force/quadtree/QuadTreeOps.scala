@@ -37,6 +37,8 @@ case class Leaf(point: Vec2f, data: List[String]) extends Vertex
 
 case class QuadTree(region: Region, root: Option[Vertex]) {}
 
+case class Quad(point: Vec2f, data: List[String], region: Region)
+
 object QuadTreeOps {
   def add(point: Vec2f, data: String, tree: QuadTree): QuadTree = {
     val v = add(point, List(data), tree.root, tree.region)
@@ -71,5 +73,22 @@ object QuadTreeOps {
             add(point, data, Some(nodeWithOldLeaf), region)
           }
       }
+  }
+
+  private val quadrantOrder: List[Quadrant] =
+    List(TopLeft, TopRight, BottomLeft, BottomRight)
+
+  def visitLeafs(tree: QuadTree): List[Quad] = {
+    def traverse(v: Option[Vertex], region: Region): List[Quad] = v match {
+      case None => List()
+      case Some(value) => value match {
+          case Node(children) => quadrantOrder.flatMap(quadrant =>
+              traverse(children.get(quadrant), region.applyQuadrant(quadrant))
+            )
+          case Leaf(point, data) => List(Quad(point, data, region))
+        }
+    }
+
+    traverse(tree.root, tree.region)
   }
 }
