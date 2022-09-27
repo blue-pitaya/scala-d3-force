@@ -1,6 +1,9 @@
 package xyz.bluepitaya.d3force
 
-case class Force(positionChange: Vec2f, velocityChange: Vec2f) {
+case class Force(
+    positionChange: Vec2f = Vec2f.zero,
+    velocityChange: Vec2f = Vec2f.zero
+) {
   def +(f: Force) =
     Force(positionChange + f.positionChange, velocityChange + f.velocityChange)
 }

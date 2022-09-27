@@ -9,16 +9,16 @@ class QuadTreeOpsSpec extends AnyFlatSpec with Matchers {
   def sut = QuadTreeOps
 
   private val exampleRegion = Region(Vec2f(0, 0), Vec2f(128, 128))
-  private val node3 = Node(Map(
+  private val node3 = TreeNode[String, Any](Map(
     BottomLeft -> Leaf(Vec2f(65, 80), List("E")),
     BottomRight -> Leaf(Vec2f(80, 90), List("F"))
   ))
-  private val node2 = Node(Map(TopLeft -> node3))
-  private val node1 = Node(Map(
+  private val node2 = TreeNode[String, Any](Map(TopLeft -> node3))
+  private val node1 = TreeNode[String, Any](Map(
     TopLeft -> Leaf(Vec2f(70, 10), List("C")),
     BottomLeft -> Leaf(Vec2f(69, 50), List("D", "D2"))
   ))
-  private val node0 = Node(Map(
+  private val node0 = TreeNode[String, Any](Map(
     TopLeft -> Leaf(Vec2f(40, 45), List("A")),
     TopRight -> node1,
     BottomLeft -> Leaf(Vec2f(15, 70), List("B")),
@@ -40,9 +40,10 @@ class QuadTreeOpsSpec extends AnyFlatSpec with Matchers {
 
     val expected = exampleQuadTree
 
-    val result = points.foldLeft(QuadTree(exampleRegion, None)) { (tree, p) =>
-      sut.add(p._1, p._2, tree)
-    }
+    val result = points
+      .foldLeft(QuadTree[String, Any](exampleRegion, None)) { (tree, p) =>
+        sut.add(p._1, p._2, tree)
+      }
 
     result shouldEqual expected
   }
@@ -58,14 +59,13 @@ class QuadTreeOpsSpec extends AnyFlatSpec with Matchers {
       (p, d)
     }
 
-    points.foldLeft(QuadTree(region, None)) { (tree, p) =>
+    points.foldLeft(QuadTree[String, Any](region, None)) { (tree, p) =>
       sut.add(p._1, p._2, tree)
     }
   }
 
-
   "visit" should "be ok" in {
-    val expected = List[Quad](
+    val expected = List[Quad[String, Any]](
       Quad(node0, Region.square(0, 0, 128)),
       Quad(Leaf(Vec2f(40, 45), List("A")), Region(Vec2f(0, 0), Vec2f(64, 64))),
       Quad(node1, Region.square(64, 0, 64)),
@@ -91,7 +91,7 @@ class QuadTreeOpsSpec extends AnyFlatSpec with Matchers {
   }
 
   "visitAfter" should "be ok" in {
-    val expected = List[Quad](
+    val expected = List[Quad[String, Any]](
       Quad(Leaf(Vec2f(40, 45), List("A")), Region(Vec2f(0, 0), Vec2f(64, 64))),
       Quad(Leaf(Vec2f(70, 10), List("C")), Region(Vec2f(64, 0), Vec2f(96, 32))),
       Quad(
