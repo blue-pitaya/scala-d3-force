@@ -10,4 +10,6 @@ case class Force(
 
 object Force {
   def zero = Force(Vec2f.zero, Vec2f.zero)
+
+  type Apply = IterationState => Node => Force
 }

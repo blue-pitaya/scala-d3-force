@@ -24,7 +24,7 @@ object ManyBodyForce {
 
   def aForce(
       options: Options = defaultOptions
-  ): SimulationState => Node => Force =
+  ): IterationState => Node => Force =
     s => { getForce(options)(s.nodes, s.alpha) }
 
   def getForce(

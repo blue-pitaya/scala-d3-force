@@ -6,7 +6,7 @@ import xyz.bluepitaya.d3force.Lcg
 import xyz.bluepitaya.d3force.Node
 import xyz.bluepitaya.d3force.Simulation
 import xyz.bluepitaya.d3force.SimulationSettings
-import xyz.bluepitaya.d3force.SimulationState
+import xyz.bluepitaya.d3force.IterationState
 import xyz.bluepitaya.d3force.Vec2f
 import xyz.bluepitaya.d3force.forces.ManyBodyForce
 import xyz.bluepitaya.d3force.quadtree._
@@ -17,7 +17,7 @@ class ManyBodyForceSpec extends AnyFlatSpec with Matchers {
     val nodes = Seq(Node("1", Vec2f(0, 0)))
     val forces = Seq(ManyBodyForce.aForce())
     val settings = SimulationSettings.default.copy(alphaMin = 0.9)
-    val result = Simulation.simulate(nodes, Seq(), forces, settings)
+    val result = Simulation.simulate(nodes, forces, settings)
 
     val expectedNodes = Seq(Node("1", Vec2f(0, 0), Vec2f(0, 0)))
 
@@ -29,7 +29,7 @@ class ManyBodyForceSpec extends AnyFlatSpec with Matchers {
     val nodes = Seq(Node("a", Vec2f(0, 0)), Node("b", Vec2f(0, 0)))
     val forces = Seq(ManyBodyForce.aForce())
     val settings = SimulationSettings.default
-    val result = Simulation.simulateN(nodes, Seq(), forces, settings, 1)
+    val result = Simulation.simulateN(nodes, forces, settings, 1)
 
     val expectedNodes = Seq(
       Node("a", Vec2f(15.758080131815227, 7.816681420541292)),
@@ -45,7 +45,7 @@ class ManyBodyForceSpec extends AnyFlatSpec with Matchers {
     val nodes = Seq(Node("a", Vec2f(0, 0)), Node("b", Vec2f(0, 0)))
     val forces = Seq(ManyBodyForce.aForce())
     val settings = SimulationSettings.default
-    val result = Simulation.simulateN(nodes, Seq(), forces, settings, 10)
+    val result = Simulation.simulateN(nodes, forces, settings, 10)
 
     val expectedNodes = Seq(
       Node("a", Vec2f(41.93439158567867, 23.799791423874424)),
@@ -63,7 +63,7 @@ class ManyBodyForceSpec extends AnyFlatSpec with Matchers {
         Seq(Node("a", Vec2f(-3.113, -7.41)), Node("b", Vec2f(9.81, 6.66)))
       val forces = Seq(ManyBodyForce.aForce())
       val settings = SimulationSettings.default
-      val result = Simulation.simulateN(nodes, Seq(), forces, settings, 10)
+      val result = Simulation.simulateN(nodes, forces, settings, 10)
 
       val expectedNodes = Seq(
         Node("a", Vec2f(-11.617783351249109, -16.66963799056527)),
@@ -84,7 +84,7 @@ class ManyBodyForceSpec extends AnyFlatSpec with Matchers {
       )
       val forces = Seq(ManyBodyForce.aForce())
       val settings = SimulationSettings.default
-      val result = Simulation.simulateN(nodes, Seq(), forces, settings, 10)
+      val result = Simulation.simulateN(nodes, forces, settings, 10)
 
       val expectedNodes = Seq(
         Node("a", Vec2f(-22.26228682613966, -19.630143363669756)),
@@ -112,7 +112,7 @@ class ManyBodyForceSpec extends AnyFlatSpec with Matchers {
       )
       val forces = Seq(ManyBodyForce.aForce(options))
       val settings = SimulationSettings.default
-      val result = Simulation.simulateN(nodes, Seq(), forces, settings, 10)
+      val result = Simulation.simulateN(nodes, forces, settings, 10)
 
       val expectedNodes = Seq(
         Node("a", Vec2f(-59.289315460492126, -44.004016738144074)),

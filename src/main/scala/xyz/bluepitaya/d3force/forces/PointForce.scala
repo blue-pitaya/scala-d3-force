@@ -1,7 +1,7 @@
 package xyz.bluepitaya.d3force.forces
 
 import xyz.bluepitaya.d3force.Node
-import xyz.bluepitaya.d3force.SimulationState
+import xyz.bluepitaya.d3force.IterationState
 import xyz.bluepitaya.d3force.Force
 import xyz.bluepitaya.d3force.Vec2f
 
@@ -12,7 +12,7 @@ object PointForce {
 
   private def force(
       options: Options
-  )(state: SimulationState)(node: Node): Force = {
+  )(state: IterationState)(node: Node): Force = {
     val velocityChange =
       (options.point(node) - node.pos) * options.strength(node) * state.alpha
     Force(velocityChange = velocityChange)
