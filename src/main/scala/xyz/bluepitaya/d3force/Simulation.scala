@@ -1,5 +1,7 @@
 package xyz.bluepitaya.d3force
 
+import xyz.bluepitaya.d3force.forces.Link
+
 case class SimulationSettings(
     alphaMin: Double,
     aplhaDecay: Double,
@@ -33,8 +35,6 @@ case class Node(id: String, pos: Vec2f, velocity: Vec2f = Vec2f.zero) {
     )
   }
 }
-
-case class Link(from: String, to: String, fromNode: Node, toNode: Node)
 
 case class SimulationState(
     nodes: Seq[Node],
@@ -101,11 +101,4 @@ object Simulation {
 
     _simulate(state)
   }
-}
-
-object Utils {
-  def inOutCount(links: Iterable[Link]) = links
-    .flatMap(l => Seq(l.from, l.to))
-    .groupBy(identity)
-    .map { case (id, ids) => (id -> ids.size) }
 }

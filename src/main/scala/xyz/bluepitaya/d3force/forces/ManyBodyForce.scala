@@ -3,7 +3,7 @@ package xyz.bluepitaya.d3force.forces
 import xyz.bluepitaya.d3force._
 import xyz.bluepitaya.d3force.quadtree._
 
-object ManyBody {
+object ManyBodyForce {
   case class Options(
       stength: Node => Double,
       distanceMin: Double,

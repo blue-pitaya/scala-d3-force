@@ -1,44 +1,28 @@
-package xyz.bluepitaya.d3force
+package xyz.bluepitaya.d3force.forces
 
-case class Force(
-    positionChange: Vec2f = Vec2f.zero,
-    velocityChange: Vec2f = Vec2f.zero
-) {
-  def +(f: Force) =
-    Force(positionChange + f.positionChange, velocityChange + f.velocityChange)
-}
+import xyz.bluepitaya.d3force.Node
+import xyz.bluepitaya.d3force.Force
+import xyz.bluepitaya.d3force.Vec2f
 
-object Force {
-  def zero = Force(Vec2f.zero, Vec2f.zero)
-}
+case class Link(from: String, to: String, fromNode: Node, toNode: Node)
 
-object Forces {
-  def centerForce(
-      extraPoint: Vec2f,
-      strength: Double
-  ): SimulationState => Node => Force =
-    s => center(extraPoint, strength)(s.nodes)
-
-  def center(extraPoint: Vec2f, strength: Double)(
-      nodes: Seq[Node]
-  ): Node => Force = {
-    val sumPoint = nodes.foldLeft(Vec2f.zero) { (sum, p) => sum + p.pos }
-    val positionChange = (sumPoint / nodes.size - extraPoint) * strength * -1
-
-    _ => Force(positionChange, Vec2f.zero)
-  }
-
+object LinkForce {
   def defaultDistance(link: Link) = 30.0
 
   // possible exception
   def defaultStrength(link: Link, inOutCount: Map[String, Int]) = 1.0 /
     Math.min(inOutCount(link.from), inOutCount(link.to))
 
+  def getInOutCount(links: Iterable[Link]) = links
+    .flatMap(l => Seq(l.from, l.to))
+    .groupBy(identity)
+    .map { case (id, ids) => (id -> ids.size) }
+
   def link(
       distance: Link => Double,
       strength: Link => Double
   )(alpha: Double, links: Seq[Link], nodes: Seq[Node]): Node => Force = {
-    val inOutCount = Utils.inOutCount(links)
+    val inOutCount = getInOutCount(links)
 
     def getBias(link: Link) = for {
       fromCount <- inOutCount.get(link.from)
