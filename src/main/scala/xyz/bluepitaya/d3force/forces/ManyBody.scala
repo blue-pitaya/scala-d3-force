@@ -1,17 +1,7 @@
 package xyz.bluepitaya.d3force.forces
 
-import xyz.bluepitaya.d3force.Force
-import xyz.bluepitaya.d3force.Node
-import xyz.bluepitaya.d3force.quadtree.Quad
-import xyz.bluepitaya.d3force.quadtree.Leaf
-import xyz.bluepitaya.d3force.Vec2f
-import xyz.bluepitaya.d3force.quadtree.QuadTreeOps
-import xyz.bluepitaya.d3force.quadtree.Vertex
-import xyz.bluepitaya.d3force.quadtree.Quadrant
-import xyz.bluepitaya.d3force.Lcg
-import xyz.bluepitaya.d3force.quadtree.Region
-import xyz.bluepitaya.d3force.quadtree.TreeNode
-import xyz.bluepitaya.d3force.SimulationState
+import xyz.bluepitaya.d3force._
+import xyz.bluepitaya.d3force.quadtree._
 
 object ManyBody {
   case class Options(
@@ -26,10 +16,10 @@ object ManyBody {
   }
 
   val defaultOptions = Options(
-    stength = _ => 30.0,
+    stength = _ => -30.0,
     distanceMin = 1.0,
     distanceMax = Double.MaxValue,
-    theta = 0.81
+    theta = 0.9
   )
 
   def aForce(
@@ -52,7 +42,6 @@ object ManyBody {
         stopCondition(options, node),
         Force()
       )
-
   }
 
   private def isTreeNode[A, B](v: Vertex[A, B]): Boolean = v match {
@@ -85,15 +74,19 @@ object ManyBody {
     if (barnesHutCondition(params, options)) {
       if (params.l < options.distanceMax2) {
         val nextParams = jiggleParams(params, options)
-        val nextVelocity = node.velocity +
-          Vec2f(nextParams.x, nextParams.y) *
-          metadata.value * alpha / nextParams.l;
+        val nextVelocity = Vec2f(nextParams.x, nextParams.y) * metadata.value *
+          alpha / nextParams.l;
 
         return Force(velocityChange = nextVelocity)
-      } else { return Force() }
+      } else {
+        //
+        return Force()
+      }
       // duplication of treenode checking
-    } else if (params.l >= options.distanceMax2) { return Force() }
-    else {
+    } else if (params.l >= options.distanceMax2) {
+      //
+      return Force()
+    } else {
       vertex match {
         case Leaf(point, data, metadata) =>
           // TODO: data cant be empty, but you know xd
@@ -105,20 +98,29 @@ object ManyBody {
             .foldLeft((Force(), params.w)) { (forceWithW, nodeData) =>
               val force = forceWithW._1
               val w = forceWithW._2
-              val nextW = (options.stength(nodeData) * alpha) / nextParams.l
-              val nextForce = force + Force(velocityChange =
-                Vec2f(nextParams.x * nextW, nextParams.y * nextW)
-              )
-              (nextForce, nextW)
+              if (nodeData != node) {
+                val str = options.stength(nodeData)
+                val nextW = (str * alpha) / nextParams.l
+                val nextForce = force + Force(velocityChange =
+                  Vec2f(nextParams.x * nextW, nextParams.y * nextW)
+                )
+                (nextForce, nextW)
+              } else {
+                //
+                (force, w)
+              }
             }
             ._1
-        case _ => Force()
+        case _ =>
+          //
+          Force()
       }
     }
   }
 
   private def barnesHutCondition(params: Params, options: Options): Boolean =
-    (params.w * params.w) / options.theta2 < params.l
+    // TODO: was <, changed to <=
+    (params.w * params.w) / options.theta2 <= params.l
 
   private def stopCondition(
       options: Options,
@@ -146,34 +148,6 @@ object ManyBody {
     Params(x = x, y = y, w = region.p2.x - region.p1.x, l = x * x + y * y)
   }
 
-  def quadApply(
-      options: Options
-  )(node: Node, alpha: Double, quad: Quad[Node, VertexMetadata]): Node = {
-    val metadata = quad.v.metadata.getOrElse(VertexMetadata.zero)
-    val x = metadata.point.x - node.pos.x
-    val y = metadata.point.y - node.pos.y
-    // sus
-    val w = quad.region.p2.x - quad.region.p1.x
-    val l = x * x + y * y
-
-    if ((w * w) / options.theta2 < l) {
-      if (l < options.distanceMax2) {
-        val nextX = if (x == 0) Lcg.jiggle else x
-        val nextY = if (y == 0) Lcg.jiggle else y
-        val nextL = if (x == 0) l + x * x else l
-        val ll = if (y == 0) nextL + y * y else nextL
-        val lll =
-          if (ll < options.distanceMin2) Math.sqrt(options.distanceMin2 * ll)
-          else ll
-        val nextVelocity = node.velocity +
-          Vec2f(nextX, nextY) * metadata.value * alpha / lll;
-
-        return node.copy(velocity = nextVelocity)
-        // and then dont go to subtree?
-      } else return node
-    } else return node // TODO:
-  }
-
   case class VertexMetadata(point: Vec2f, value: Double)
 
   object VertexMetadata {
@@ -191,7 +165,6 @@ object ManyBody {
       oldMetadata: Option[Any],
       children: Map[Quadrant, Vertex[Node, VertexMetadata]]
   ): Option[VertexMetadata] = {
-    val (_, ok) = (2, 3)
     val (strength, weight, x, y) = children
       .map(_._2)
       .foldLeft((0.0, 0.0, 0.0, 0.0)) { (value, v) =>

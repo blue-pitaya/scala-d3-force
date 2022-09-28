@@ -1,36 +1,7 @@
 package xyz.bluepitaya.d3force.quadtree
 
 import xyz.bluepitaya.d3force.Vec2f
-
-case class Region(p1: Vec2f, p2: Vec2f) {
-  lazy val middle = p1 + ((p2 - p1) / 2)
-
-  def quadrantOf(p: Vec2f): Quadrant = {
-    val isRight = p.x >= middle.x
-    val isBottom = p.y >= middle.y
-
-    (isRight, isBottom) match {
-      case (false, false) => TopLeft
-      case (true, false)  => TopRight
-      case (false, true)  => BottomLeft
-      case (true, true)   => BottomRight
-    }
-  }
-
-  def applyQuadrant(q: Quadrant): Region = q match {
-    case TopLeft     => Region(p1, middle)
-    case TopRight    => Region(Vec2f(middle.x, p1.y), Vec2f(p2.x, middle.y))
-    case BottomLeft  => Region(Vec2f(p1.x, middle.y), Vec2f(middle.x, p2.y))
-    case BottomRight => Region(middle, p2)
-  }
-}
-
-object Region {
-  def square(x1: Double, x2: Double, a: Double): Region = {
-    val from = Vec2f(x1, x2)
-    Region(from, from + Vec2f(a, a))
-  }
-}
+import xyz.bluepitaya.d3force.Force
 
 sealed trait Quadrant
 case object TopLeft extends Quadrant
@@ -49,8 +20,6 @@ case class Leaf[A, B](point: Vec2f, data: List[A], metadata: Option[B] = None)
     extends Vertex[A, B]
 
 case class QuadTree[A, B](region: Region, root: Option[Vertex[A, B]]) {}
-
-case class Quad[A, B](v: Vertex[A, B], region: Region)
 
 object QuadTreeOps {
   def add[A, B](point: Vec2f, data: A, tree: QuadTree[A, B]): QuadTree[A, B] = {
@@ -90,9 +59,17 @@ object QuadTreeOps {
   }
 
   private def getSize(points: Seq[Vec2f]): Region = {
+    def log2(x: Double) = Math.log(x) / Math.log(2.0)
+
     val from = Vec2f(points.map(_.x).min, points.map(_.y).min)
     val to = Vec2f(points.map(_.x).max, points.map(_.y).max)
-    Region(from, to)
+    val _w = Math.abs(to.x - from.x)
+    val _h = Math.abs(to.y - from.y)
+    val w_exponent = if (_w > 1) Math.ceil(log2(_w)) else 0
+    val h_exponent = if (_h > 1) Math.ceil(log2(_h)) else 0
+    val w = Math.pow(2, w_exponent)
+    val h = Math.pow(2, h_exponent)
+    Region(from.floor, (from + Vec2f(w, h)).floor)
   }
 
   def addAll[A, B](dataPoints: Seq[(Vec2f, A)]): QuadTree[A, B] = {
@@ -104,56 +81,34 @@ object QuadTreeOps {
   private val quadrantOrder: List[Quadrant] =
     List(TopLeft, TopRight, BottomLeft, BottomRight)
 
-  private sealed trait TraversalOrder
-  private case object PreOrder extends TraversalOrder
-  private case object PostOrder extends TraversalOrder
-
-  private def _visit[A, B](
+  def preorderReduceData[A, B](
       tree: QuadTree[A, B],
-      order: TraversalOrder
-  ): List[Quad[A, B]] = {
-    def traverse(v: Option[Vertex[A, B]], region: Region): List[Quad[A, B]] =
-      v match {
-        case None => List()
-        case Some(value) => value match {
-            case node: TreeNode[A, B] =>
-              val rest = quadrantOrder.flatMap(quadrant =>
-                traverse(
-                  node.children.get(quadrant),
-                  region.applyQuadrant(quadrant)
-                )
-              )
-              val quad = Quad(node, region)
-              order match {
-                case PreOrder  => List(quad) ++ rest
-                case PostOrder => rest ++ List(quad)
-              }
-            case leaf: Leaf[A, B] => List(Quad(leaf, region))
-          }
-      }
-
-    traverse(tree.root, tree.region)
-  }
-
-  def preorderReduceData[A, B, C](
-      tree: QuadTree[A, B],
-      mapping: (Vertex[A, B], Region) => C,
+      mapping: (Vertex[A, B], Region) => Force,
       stopCondition: (TreeNode[A, B], Region) => Boolean,
-      initialData: C
-  ): C = {
-    def traverse(root: Option[Vertex[A, B]], region: Region, data: C): C =
-      root match {
-        case None => data
-        case Some(v) => v match {
-            case node: TreeNode[A, B] =>
-              val nextData = mapping(node, region)
-              if (stopCondition(node, region)) nextData
-              else quadrantOrder.foldLeft(nextData) { (n, q) =>
+      initialData: Force
+  ): Force = {
+    def traverse(
+        root: Option[Vertex[A, B]],
+        region: Region,
+        data: Force
+    ): Force = root match {
+      case None => data
+      case Some(v) => v match {
+          case node: TreeNode[A, B] =>
+            val nextData = data + mapping(node, region)
+            if (stopCondition(node, region))
+              //
+              nextData
+            else quadrantOrder.foldLeft(nextData) { (n, q) =>
+              val xd =
                 traverse(node.children.get(q), region.applyQuadrant(q), n)
-              }
-            case leaf: Leaf[A, B] => mapping(leaf, region)
-          }
-      }
+              xd
+            }
+          case leaf: Leaf[A, B] =>
+            val next = mapping(leaf, region)
+            data + next
+        }
+    }
 
     traverse(tree.root, tree.region, initialData)
   }
@@ -167,32 +122,21 @@ object QuadTreeOps {
     def traverse(
         root: Option[Vertex[A, B]],
         region: Region
-    ): Option[Vertex[A, C]] = root match {
-      case None => None
-      case Some(v) => v match {
-          case TreeNode(children, metadata) =>
-            val nextChildren = quadrantOrder
-              .flatMap { quadrant =>
-                traverse(children.get(quadrant), region.applyQuadrant(quadrant))
-                  .map(x => quadrant -> x)
-              }
-              .toMap
-            val nextMetadata = nodeMapping(metadata, nextChildren)
-            Some(TreeNode[A, C](nextChildren, nextMetadata))
-          case Leaf(point, data, metadata) => Some(Leaf(
-              point,
-              data,
-              nodeMapping(metadata, Map[Quadrant, Vertex[A, C]]())
-            ))
-        }
+    ): Option[Vertex[A, C]] = root.map {
+      case TreeNode(children, metadata) =>
+        val nextChildren = quadrantOrder
+          .flatMap { quadrant =>
+            traverse(children.get(quadrant), region.applyQuadrant(quadrant))
+              .map(x => quadrant -> x)
+          }
+          .toMap
+        val nextMetadata = nodeMapping(metadata, nextChildren)
+        TreeNode[A, C](nextChildren, nextMetadata)
+      case leaf: Leaf[A, B] =>
+        val nextMetadata = leafMapping(leaf)
+        leaf.copy(metadata = nextMetadata)
     }
 
     QuadTree(tree.region, traverse(tree.root, tree.region))
   }
-
-  def visit[A, B](tree: QuadTree[A, B]): List[Quad[A, B]] =
-    _visit(tree, PreOrder)
-
-  def visitAfter[A, B](tree: QuadTree[A, B]): List[Quad[A, B]] =
-    _visit(tree, PostOrder)
 }

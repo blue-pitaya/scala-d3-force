@@ -19,10 +19,10 @@ object SimulationSettings {
   }
 }
 
-case class Node(id: String, pos: Vec2f, velocity: Vec2f) {
+case class Node(id: String, pos: Vec2f, velocity: Vec2f = Vec2f.zero) {
   def move(velocityDecay: Double): Node = {
-    val nextPos = pos + velocity
     val nextVelocity = velocity * velocityDecay;
+    val nextPos = pos + nextVelocity
     copy(pos = nextPos, velocity = nextVelocity)
   }
 
@@ -36,9 +36,15 @@ case class Node(id: String, pos: Vec2f, velocity: Vec2f) {
 
 case class Link(from: String, to: String, fromNode: Node, toNode: Node)
 
-case class SimulationState(nodes: Seq[Node], links: Seq[Link], alpha: Double)
+case class SimulationState(
+    nodes: Seq[Node],
+    links: Seq[Link] = Seq(),
+    alpha: Double = 1.0
+)
 
 object Simulation {
+  def preprareState(nodes: Seq[Node], links: Seq[Link]): SimulationState = ???
+
   def tick(
       state: SimulationState,
       settings: SimulationSettings,
@@ -47,31 +53,49 @@ object Simulation {
     val nextAlpha =
       state.alpha + (settings.alphaTarget - state.alpha) * settings.aplhaDecay;
 
+    val nextState = state.copy(alpha = nextAlpha)
+
     def force(n: Node) = forces
-      .map(f => f(state)(n))
-      .foldLeft(Force.zero)(_ + _)
+      .map(f => f(nextState)(n))
+      .foldLeft(Force.zero) { (a, b) =>
+        //
+        a + b
+      }
 
-    val nextNodes = state
+    val nextNodes = nextState
       .nodes
-      .map(node => node.applyForce(force(node)))
-      .map(_.move(settings.velocityDecay))
+      .map(node => {
+        val f = force(node)
+        node.applyForce(f)
+      })
+    val nextNodes2 = nextNodes.map(_.move(settings.velocityDecay))
+    nextState.copy(nodes = nextNodes2, alpha = nextAlpha)
+  }
 
-    state.copy(nodes = nextNodes, alpha = nextAlpha)
+  def simulateN(
+      nodes: Seq[Node],
+      links: Seq[Link],
+      forces: Seq[SimulationState => Node => Force],
+      settings: SimulationSettings = SimulationSettings.default,
+      n: Int
+  ): SimulationState = {
+    def _simulate(state: SimulationState, n: Int): SimulationState =
+      if (n == 0) state else { _simulate(tick(state, settings, forces), n - 1) }
+
+    val state = SimulationState(nodes = nodes, links = links, alpha = 1.0)
+
+    _simulate(state, n)
   }
 
   def simulate(
       nodes: Seq[Node],
       links: Seq[Link],
       forces: Seq[SimulationState => Node => Force],
-      settings: SimulationSettings,
-      onTick: SimulationState => Unit = s => ()
+      settings: SimulationSettings = SimulationSettings.default
   ): SimulationState = {
     def _simulate(state: SimulationState): SimulationState =
       if (state.alpha < settings.alphaMin) state
-      else {
-        onTick(state)
-        _simulate(tick(state, settings, forces))
-      }
+      else { _simulate(tick(state, settings, forces)) }
 
     val state = SimulationState(nodes = nodes, links = links, alpha = 1.0)
 
