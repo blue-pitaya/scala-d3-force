@@ -10,14 +10,23 @@ import xyz.bluepitaya.d3force.IterationState
 import xyz.bluepitaya.d3force.Vec2f
 import xyz.bluepitaya.d3force.forces.ManyBodyForce
 import xyz.bluepitaya.d3force.quadtree._
+import xyz.bluepitaya.d3force.d3
 
 class ManyBodyForceSpec extends AnyFlatSpec with Matchers {
+  def getResult(nodes: Seq[Node], n: Int) = d3
+    .forceSimulation(nodes)
+    .force(d3.forceManyBody())
+    .tick(n)
+
   "single point on (0,0)" should "remain in same place" in {
     Lcg.reset
     val nodes = Seq(Node("1", Vec2f(0, 0)))
-    val forces = Seq(ManyBodyForce.aForce())
     val settings = SimulationSettings.default.copy(alphaMin = 0.9)
-    val result = Simulation.simulate(nodes, forces, settings)
+    val result = d3
+      .forceSimulation(nodes)
+      .alphaMin(0.9)
+      .force(d3.forceManyBody())
+      .simulate()
 
     val expectedNodes = Seq(Node("1", Vec2f(0, 0), Vec2f(0, 0)))
 
@@ -27,9 +36,7 @@ class ManyBodyForceSpec extends AnyFlatSpec with Matchers {
   "two points on (0,0)" should "repulse each other on 1 tick" in {
     Lcg.reset
     val nodes = Seq(Node("a", Vec2f(0, 0)), Node("b", Vec2f(0, 0)))
-    val forces = Seq(ManyBodyForce.aForce())
-    val settings = SimulationSettings.default
-    val result = Simulation.simulateN(nodes, forces, settings, 1)
+    val result = getResult(nodes, 1)
 
     val expectedNodes = Seq(
       Node("a", Vec2f(15.758080131815227, 7.816681420541292)),
@@ -43,9 +50,7 @@ class ManyBodyForceSpec extends AnyFlatSpec with Matchers {
   "two points on (0,0)" should "repulse each other on 10 tick" in {
     Lcg.reset
     val nodes = Seq(Node("a", Vec2f(0, 0)), Node("b", Vec2f(0, 0)))
-    val forces = Seq(ManyBodyForce.aForce())
-    val settings = SimulationSettings.default
-    val result = Simulation.simulateN(nodes, forces, settings, 10)
+    val result = getResult(nodes, 10)
 
     val expectedNodes = Seq(
       Node("a", Vec2f(41.93439158567867, 23.799791423874424)),
@@ -61,9 +66,7 @@ class ManyBodyForceSpec extends AnyFlatSpec with Matchers {
       Lcg.reset
       val nodes =
         Seq(Node("a", Vec2f(-3.113, -7.41)), Node("b", Vec2f(9.81, 6.66)))
-      val forces = Seq(ManyBodyForce.aForce())
-      val settings = SimulationSettings.default
-      val result = Simulation.simulateN(nodes, forces, settings, 10)
+      val result = getResult(nodes, 10)
 
       val expectedNodes = Seq(
         Node("a", Vec2f(-11.617783351249109, -16.66963799056527)),
@@ -82,9 +85,7 @@ class ManyBodyForceSpec extends AnyFlatSpec with Matchers {
         Node("b", Vec2f(9.81, 6.66)),
         Node("c", Vec2f(10.01, 0.0))
       )
-      val forces = Seq(ManyBodyForce.aForce())
-      val settings = SimulationSettings.default
-      val result = Simulation.simulateN(nodes, forces, settings, 10)
+      val result = getResult(nodes, 10)
 
       val expectedNodes = Seq(
         Node("a", Vec2f(-22.26228682613966, -19.630143363669756)),
@@ -104,15 +105,16 @@ class ManyBodyForceSpec extends AnyFlatSpec with Matchers {
         Node("b", Vec2f(9.81, 6.66)),
         Node("c", Vec2f(10.01, 0.0))
       )
-      val options = ManyBodyForce.Options(
-        stength = n => -150,
-        distanceMin = 10,
-        distanceMax = 1000,
-        theta = 0.95
-      )
-      val forces = Seq(ManyBodyForce.aForce(options))
-      val settings = SimulationSettings.default
-      val result = Simulation.simulateN(nodes, forces, settings, 10)
+      val result = d3
+        .forceSimulation(nodes)
+        .force(
+          d3.forceManyBody()
+            .strength(-150)
+            .distanceMin(10)
+            .distanceMax(1000)
+            .theta(0.95)
+        )
+        .tick(10)
 
       val expectedNodes = Seq(
         Node("a", Vec2f(-59.289315460492126, -44.004016738144074)),

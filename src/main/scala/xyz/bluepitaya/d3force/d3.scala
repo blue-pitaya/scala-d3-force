@@ -4,6 +4,7 @@ import xyz.bluepitaya.d3force.forces.CenterForce
 import xyz.bluepitaya.d3force.forces.PointForce
 import xyz.bluepitaya.d3force.forces.Link
 import xyz.bluepitaya.d3force.forces.LinkForce
+import xyz.bluepitaya.d3force.forces.ManyBodyForce
 
 sealed trait ForceState {
   def force: Force.Apply
@@ -33,7 +34,19 @@ case class LinkForceState(
   def distance(v: Link => Double) = copy(_distance = v)
   def strength(v: (Link, Seq[Link]) => Double) = copy(_strength = v)
   def iterations() = ???
+}
 
+case class ManyBodyForceState(
+    options: ManyBodyForce.Options = ManyBodyForce.defaultOptions
+) extends ForceState {
+  override def force: Force.Apply =
+    s => ManyBodyForce.force(options)(s.nodes, s.alpha)
+
+  def strength(v: Node => Double) = copy(options = options.copy(stength = v))
+  def strength(v: Double) = copy(options = options.copy(stength = _ => v))
+  def theta(v: Double) = copy(options = options.copy(theta = v))
+  def distanceMin(v: Double) = copy(options = options.copy(distanceMin = v))
+  def distanceMax(v: Double) = copy(options = options.copy(distanceMax = v))
 }
 
 case class SimState(
@@ -44,11 +57,13 @@ case class SimState(
 ) {
   def restart() = ???
   def stop() = ???
-  def tick(n: Int): IterationState = {
-    val state = IterationState(nodes = _nodes, alpha = _alpha)
-    val forcesSeq = forces.map(_._2.force).toSeq
-    Simulation.simulateN(_nodes, forcesSeq, settings, n)
-  }
+
+  lazy val forcesSeq = forces.map(_._2.force).toSeq
+
+  def tick(n: Int): IterationState = Simulation
+    .simulateN(_nodes, forcesSeq, settings, n)
+  def simulate(): IterationState = Simulation
+    .simulate(_nodes, forcesSeq, settings)
 
   def nodes(v: Seq[Node]) = copy(_nodes = v)
   def alpha(v: Double) = copy(_alpha = v)
@@ -67,12 +82,14 @@ case class SimState(
 }
 
 object d3 {
+  def forceSimulation(nodes: Seq[Node] = Seq()): SimState =
+    SimState(nodes, SimulationSettings.default)
+
   def forceCenter(x: Double = 0.0, y: Double = 0.0): CenterForceState =
     CenterForceState(Vec2f(x, y))
 
   def forceLink(links: Seq[Link] = Seq()): LinkForceState =
     LinkForceState(links)
 
-  def forceSimulation(nodes: Seq[Node] = Seq()): SimState =
-    SimState(nodes, SimulationSettings.default)
+  def forceManyBody(): ManyBodyForceState = ManyBodyForceState()
 }

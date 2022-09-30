@@ -22,12 +22,7 @@ object ManyBodyForce {
     theta = 0.9
   )
 
-  def aForce(
-      options: Options = defaultOptions
-  ): IterationState => Node => Force =
-    s => { getForce(options)(s.nodes, s.alpha) }
-
-  def getForce(
+  def force(
       options: Options = defaultOptions
   )(nodes: Seq[Node], alpha: Double): Node => Force = {
     val dataPoints: Seq[(Vec2f, Node)] = nodes.map(n => (n.pos, n))
