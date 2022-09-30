@@ -88,7 +88,7 @@ case class SimulationState(
   // def randomSource() = ???
   // def on() = ???
 
-  lazy val forcesSeq = forces.map(_._2.force).toSeq
+  private lazy val forcesSeq = forces.map(_._2.force).toSeq
 
   def tick(n: Int): IterationState = Simulation
     .simulateN(_nodes, forcesSeq, settings, n)

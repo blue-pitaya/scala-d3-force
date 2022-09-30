@@ -39,8 +39,6 @@ case class Node(id: String, pos: Vec2f, velocity: Vec2f = Vec2f.zero) {
 case class IterationState(nodes: Seq[Node], alpha: Double = 1.0)
 
 object Simulation {
-  def preprareState(nodes: Seq[Node], links: Seq[Link]): IterationState = ???
-
   def tick(
       state: IterationState,
       settings: SimulationSettings,
