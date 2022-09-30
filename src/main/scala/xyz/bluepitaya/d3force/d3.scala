@@ -1,7 +1,7 @@
 package xyz.bluepitaya.d3force
 
 import xyz.bluepitaya.d3force.forces.CenterForce
-import xyz.bluepitaya.d3force.forces.PointForce
+import xyz.bluepitaya.d3force.forces.PositionForce
 import xyz.bluepitaya.d3force.forces.Link
 import xyz.bluepitaya.d3force.forces.LinkForce
 import xyz.bluepitaya.d3force.forces.ManyBodyForce
@@ -29,11 +29,13 @@ case class LinkForceState(
     s => LinkForce.force(_links, _distance, _strength)(s.alpha, s.nodes)
 
   def links(v: Seq[Link]) = copy(_links = v)
-  def id() = ???
   def distance(v: Double) = copy(_distance = _ => v)
   def distance(v: Link => Double) = copy(_distance = v)
+  def strength(v: Double) = copy(_strength = (_, _) => v)
   def strength(v: (Link, Seq[Link]) => Double) = copy(_strength = v)
-  def iterations() = ???
+
+  // def id() = ???
+  // def iterations() = ???
 }
 
 case class ManyBodyForceState(
@@ -49,14 +51,42 @@ case class ManyBodyForceState(
   def distanceMax(v: Double) = copy(options = options.copy(distanceMax = v))
 }
 
+case class XForceState(
+    _strength: Node => Double = _ => 0.1,
+    x: Node => Double = _ => 0.0
+) extends ForceState {
+  override def force: Force.Apply =
+    s => PositionForce.force(_strength, n => Vec2f(x(n), 0.0), s.alpha)
+
+  def strength(v: Double) = copy(_strength = _ => v)
+  def strength(v: Node => Double) = copy(_strength = v)
+  def x(v: Node => Double) = copy(x = v)
+  def x(v: Double) = copy(x = _ => v)
+}
+
+case class YForceState(
+    _strength: Node => Double = _ => 0.1,
+    y: Node => Double = _ => 0.0
+) extends ForceState {
+  override def force: Force.Apply =
+    s => PositionForce.force(_strength, n => Vec2f(0.0, y(n)), s.alpha)
+
+  def strength(v: Double) = copy(_strength = _ => v)
+  def strength(v: Node => Double) = copy(_strength = v)
+  def y(v: Node => Double) = copy(y = v)
+  def y(v: Double) = copy(y = _ => v)
+}
+
 case class SimState(
     _nodes: Seq[Node],
     settings: SimulationSettings,
     forces: Map[String, ForceState] = Map(),
     _alpha: Double = 1.0
 ) {
-  def restart() = ???
-  def stop() = ???
+  // def restart() = ???
+  // def stop() = ???
+  // def randomSource() = ???
+  // def on() = ???
 
   lazy val forcesSeq = forces.map(_._2.force).toSeq
 
@@ -76,9 +106,6 @@ case class SimState(
   def force(f: ForceState) =
     copy(forces = forces.updated(f.getClass().getCanonicalName(), f))
 
-  def randomSource() = ???
-  def on() = ???
-
 }
 
 object d3 {
@@ -92,4 +119,8 @@ object d3 {
     LinkForceState(links)
 
   def forceManyBody(): ManyBodyForceState = ManyBodyForceState()
+
+  def forceX(): XForceState = XForceState()
+
+  def forceY(): YForceState = YForceState()
 }

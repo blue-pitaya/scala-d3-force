@@ -5,3 +5,9 @@ This module implements simulation of physical forces on particles just like in d
 [d3-force](https://github.com/d3/d3-force)
 
 Work in progress!
+
+## Todo
+
+- Collision
+- Radial force
+- Link force id and iterations methods
