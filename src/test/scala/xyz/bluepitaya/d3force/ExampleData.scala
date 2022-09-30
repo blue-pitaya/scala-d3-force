@@ -1,7 +1,5 @@
-package example
+package xyz.bluepitaya.d3force
 
-import xyz.bluepitaya.d3force.Node
-import xyz.bluepitaya.d3force.Vec2f
 import xyz.bluepitaya.d3force.forces.Link
 
 object ExampleData {

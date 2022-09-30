@@ -1,15 +1,13 @@
-package example.forces
+package xyz.bluepitaya.d3force.forces
 
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
+import xyz.bluepitaya.d3force.IterationState
 import xyz.bluepitaya.d3force.Lcg
 import xyz.bluepitaya.d3force.Node
 import xyz.bluepitaya.d3force.Simulation
 import xyz.bluepitaya.d3force.SimulationSettings
-import xyz.bluepitaya.d3force.IterationState
 import xyz.bluepitaya.d3force.Vec2f
-import xyz.bluepitaya.d3force.forces.ManyBodyForce
-import xyz.bluepitaya.d3force.quadtree._
 import xyz.bluepitaya.d3force.d3
 
 class ManyBodyForceSpec extends AnyFlatSpec with Matchers {

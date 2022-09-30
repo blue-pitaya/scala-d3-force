@@ -77,7 +77,7 @@ case class YForceState(
   def y(v: Double) = copy(y = _ => v)
 }
 
-case class SimState(
+case class SimulationState(
     _nodes: Seq[Node],
     settings: SimulationSettings,
     forces: Map[String, ForceState] = Map(),
@@ -109,8 +109,8 @@ case class SimState(
 }
 
 object d3 {
-  def forceSimulation(nodes: Seq[Node] = Seq()): SimState =
-    SimState(nodes, SimulationSettings.default)
+  def forceSimulation(nodes: Seq[Node] = Seq()): SimulationState =
+    SimulationState(nodes, SimulationSettings.default)
 
   def forceCenter(x: Double = 0.0, y: Double = 0.0): CenterForceState =
     CenterForceState(Vec2f(x, y))

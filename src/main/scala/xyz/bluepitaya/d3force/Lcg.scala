@@ -17,6 +17,5 @@ object Lcg {
 
   def jiggle = (next - 0.5) * 1e-6
 
-  // TODO: !!!
   def reset = (s = 1L)
 }

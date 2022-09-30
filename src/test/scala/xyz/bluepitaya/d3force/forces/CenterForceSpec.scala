@@ -1,9 +1,9 @@
-package example.forces
+package xyz.bluepitaya.d3force.forces
 
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import xyz.bluepitaya.d3force.Lcg
-import example.ExampleData
+import xyz.bluepitaya.d3force.ExampleData
 import xyz.bluepitaya.d3force.SimulationSettings
 import xyz.bluepitaya.d3force.d3
 import xyz.bluepitaya.d3force.Node

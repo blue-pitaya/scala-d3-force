@@ -1,13 +1,12 @@
-package example.forces
+package xyz.bluepitaya.d3force.forces
 
-import example.ExampleData
+import xyz.bluepitaya.d3force.ExampleData
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import xyz.bluepitaya.d3force.Lcg
 import xyz.bluepitaya.d3force.Node
 import xyz.bluepitaya.d3force.Vec2f
 import xyz.bluepitaya.d3force.d3
-import xyz.bluepitaya.d3force.forces.Link
 
 class LinkForceSpec extends AnyFlatSpec with Matchers {
   "link force of random points" should "be same as original d3" in {
