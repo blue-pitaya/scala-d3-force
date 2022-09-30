@@ -50,22 +50,18 @@ object Simulation {
       state.alpha + (settings.alphaTarget - state.alpha) * settings.alphaDecay;
 
     val nextState = state.copy(alpha = nextAlpha)
-
-    def force(n: Node) = forces
-      .map(f => f(nextState)(n))
-      .foldLeft(Force.zero) { (a, b) =>
-        //
-        a + b
-      }
+    val forceFunctions = forces.map(_(nextState))
 
     val nextNodes = nextState
       .nodes
       .map(node => {
-        val f = force(node)
-        node.applyForce(f)
+        val force = forceFunctions.foldLeft(Force()) { (_force, getForce) =>
+          _force + getForce(node)
+        }
+        node.applyForce(force)
       })
-    val nextNodes2 = nextNodes.map(_.move(settings.velocityDecay))
-    nextState.copy(nodes = nextNodes2, alpha = nextAlpha)
+      .map(_.move(settings.velocityDecay))
+    nextState.copy(nodes = nextNodes, alpha = nextAlpha)
   }
 
   def simulateN(
