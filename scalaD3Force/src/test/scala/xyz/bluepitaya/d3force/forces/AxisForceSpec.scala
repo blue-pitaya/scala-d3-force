@@ -5,10 +5,12 @@ import org.scalatest.matchers.should.Matchers
 import xyz.bluepitaya.d3force.Node
 import xyz.bluepitaya.d3force.Vec2f
 import xyz.bluepitaya.d3force.d3
+import xyz.bluepitaya.d3force.Lcg
 
 class AxisForceSpec extends AnyFlatSpec with Matchers {
   "five points with fixed point and with force X and Y" should
     "match original d3" in {
+      Lcg.reset
       val nodes = Seq(
         Node("a", pos = Vec2f.zero, isFixed = true),
         Node("b", pos = Vec2f(-26, -6)),

@@ -6,31 +6,65 @@ import xyz.bluepitaya.d3force.forces.Link
 
 //TODO:
 class SimulationSpec extends AnyFlatSpec with Matchers {
-  // "simulation with different kinds of forces" should
-  //  "behave as in original d3" in {
-  //    Lcg.reset
-  //    val nodes = ExampleData.fiveClosePoints
-  //    val links = ExampleData.linksOfFiveClosePoints
-  //    val result = d3
-  //      .forceSimulation(nodes)
-  //      .force(d3.forceCenter())
-  //      .force(d3.forceLink(links))
-  //      .force(d3.forceManyBody())
-  //      .force(d3.forceX().x(1.0))
-  //      .force(d3.forceY().y(-1.0))
-  //      .tick(200)
 
-  //    // this points differ from original d3, but behave in similar way
-  //    val expected = Seq(
-  //      Node("a", Vec2f(1.0507086090870659, -18.147203317721477), Vec2f(0, 0)),
-  //      Node("b", Vec2f(6.110591533009633, 11.657540856811096), Vec2f(0, 0)),
-  //      Node("c", Vec2f(21.649461740077555, 1.5287392824094017), Vec2f(0, 0)),
-  //      Node("d", Vec2f(-16.308073309604318, -7.906786293862084), Vec2f(0, 0)),
-  //      Node("e", Vec2f(-12.49024169156734, 12.864531487810286), Vec2f(0, 0))
-  //    )
+  // this test must pass!
+  "five points with theta 0.99 and charge -1000 with force X and Y" should
+    "match original d3" in {
+      Lcg.reset
+      val nodes = Seq(
+        Node("a", pos = Vec2f.zero, isFixed = true),
+        Node("b", pos = Vec2f(-26, -6)),
+        Node("c", pos = Vec2f(-20, -31)),
+        Node("d", pos = Vec2f(-24, 3)),
+        Node("e", pos = Vec2f(-9, -6))
+      )
 
-  //    result.nodes.map(_.copy(velocity = Vec2f.zero)) shouldEqual expected
-  //  }
+      val result = d3
+        .forceSimulation(nodes)
+        .velocityDecay(0.1)
+        .force(d3.forceManyBody().theta(0.99).strength(-1000))
+        .force(d3.forceX().strength(0.1))
+        .force(d3.forceY().strength(0.1))
+        .tick(300)
+        .nodes
+
+      val expected = Seq(
+        Node("a", pos = Vec2f.zero, isFixed = true),
+        Node("b", pos = Vec2f(-143.5359580466657, 66.2543348696558)),
+        Node("c", pos = Vec2f(-66.26722198044175, -143.54951914750544)),
+        Node("d", pos = Vec2f(143.53615887906258, -66.34433598953407)),
+        Node("e", pos = Vec2f(66.1772132575984, 143.60883218459568))
+      )
+
+      result.map(_.copy(velocity = Vec2f.zero)) shouldEqual expected
+    }
+
+  "simulation with different kinds of forces" should
+    "behave as in original d3" in {
+      Lcg.reset
+      val nodes = ExampleData.fiveClosePoints
+      val links = ExampleData.linksOfFiveClosePoints
+      val result = d3
+        .forceSimulation(nodes)
+        .force(d3.forceLink(links))
+        .force(d3.forceManyBody())
+        .force(d3.forceX().x(1.0))
+        .force(d3.forceY().y(-1.0))
+        .tick(200)
+
+      val expected = Seq(
+        Node("a", Vec2f(-1.00328, -23.5294), Vec2f(0, 0)),
+        Node("b", Vec2f(8.90035, 6.32949), Vec2f(0, 0)),
+        Node("c", Vec2f(26.84101, -11.58169), Vec2f(0, 0)),
+        Node("d", Vec2f(-20.56217, -2.40199), Vec2f(0, 0)),
+        Node("e", Vec2f(-7.62675, 26.56455), Vec2f(0, 0))
+      )
+
+      result
+        .nodes
+        .map(n => n.copy(pos = n.pos.round, velocity = Vec2f.zero)) shouldEqual
+        expected
+    }
 
   //// force center strength 10 is too big, and fricks whole system
   // "simulation" should "not raise stack overflow error" in {

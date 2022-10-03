@@ -16,6 +16,13 @@ case class Vec2f(val x: Double, val y: Double) {
     Vec2f(x = if (x == 0) 1e-6 else x, y = if (y == 0) 1e-6 else y)
 
   def floor = Vec2f(Math.floor(x), Math.floor(y))
+
+  def round = {
+    def r(v: Double) = BigDecimal(v)
+      .setScale(5, BigDecimal.RoundingMode.HALF_UP)
+      .toDouble
+    Vec2f(r(x), r(y))
+  }
 }
 
 object Vec2f {

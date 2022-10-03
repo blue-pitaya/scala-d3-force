@@ -15,7 +15,7 @@ object AxisForce {
       value: Node => Double,
       alpha: Double
   ): Node => Force = node => {
-    def f(axisPos: Double) = value(node) - axisPos * strength(node) * alpha
+    def f(axisPos: Double) = (value(node) - axisPos) * strength(node) * alpha
 
     val velocityChange = axis match {
       case X => Vec2f(f(node.pos.x), 0)
