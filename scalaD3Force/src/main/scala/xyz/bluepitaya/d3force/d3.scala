@@ -5,13 +5,16 @@ import xyz.bluepitaya.d3force.forces.PositionForce
 import xyz.bluepitaya.d3force.forces.Link
 import xyz.bluepitaya.d3force.forces.LinkForce
 import xyz.bluepitaya.d3force.forces.ManyBodyForce
+import xyz.bluepitaya.d3force.forces.RadialForce
 
 sealed trait ForceState {
+  def forceId: String
   def force: Force.Apply
 }
 
 case class CenterForceState(point: Vec2f = Vec2f.zero, _strength: Double = 1.0)
     extends ForceState {
+  override def forceId: String = "center"
   override def force: Force.Apply =
     s => CenterForce.force(point, _strength, s.nodes)
 
@@ -25,6 +28,7 @@ case class LinkForceState(
     _distance: Link => Double = _ => 30.0,
     _strength: (Link, Seq[Link]) => Double = LinkForce.defaultStrength
 ) extends ForceState {
+  override def forceId: String = "link"
   override def force: Force.Apply =
     s => LinkForce.force(_links, _distance, _strength)(s.alpha, s.nodes)
 
@@ -41,6 +45,7 @@ case class LinkForceState(
 case class ManyBodyForceState(
     options: ManyBodyForce.Options = ManyBodyForce.defaultOptions
 ) extends ForceState {
+  override def forceId: String = "charge"
   override def force: Force.Apply =
     s => ManyBodyForce.force(options)(s.nodes, s.alpha)
 
@@ -55,6 +60,7 @@ case class XForceState(
     _strength: Node => Double = _ => 0.1,
     x: Node => Double = _ => 0.0
 ) extends ForceState {
+  override def forceId: String = "x"
   override def force: Force.Apply =
     s => PositionForce.force(_strength, n => Vec2f(x(n), 0.0), s.alpha)
 
@@ -68,6 +74,7 @@ case class YForceState(
     _strength: Node => Double = _ => 0.1,
     y: Node => Double = _ => 0.0
 ) extends ForceState {
+  override def forceId: String = "y"
   override def force: Force.Apply =
     s => PositionForce.force(_strength, n => Vec2f(0.0, y(n)), s.alpha)
 
@@ -77,10 +84,27 @@ case class YForceState(
   def y(v: Double) = copy(y = _ => v)
 }
 
+case class RadialForceState(
+    _radius: Node => Double,
+    _strength: Node => Double = _ => 0.1,
+    point: Vec2f = Vec2f(0, 0)
+) extends ForceState {
+  override def forceId: String = "radial"
+  override def force: Force.Apply =
+    s => RadialForce.force(_strength, point, _radius, s.alpha)
+
+  def strength(v: Double) = copy(_strength = _ => v)
+  def strength(v: Node => Double) = copy(_strength = v)
+  def x(v: Double) = copy(point = Vec2f(v, point.y))
+  def y(v: Double) = copy(point = Vec2f(point.x, v))
+  def radius(v: Double) = copy(_radius = _ => v)
+  def radius(v: Node => Double) = copy(_radius = v)
+}
+
 case class SimulationState(
     _nodes: Seq[Node],
     settings: SimulationSettings,
-    forces: Map[String, ForceState] = Map(),
+    forces: Map[String, ForceState] = Map(), // TODO: change to seq
     _alpha: Double = 1.0
 ) {
   // def restart() = ???
@@ -103,9 +127,7 @@ case class SimulationState(
   def velocityDecay(v: Double) =
     copy(settings = settings.copy(velocityDecay = v))
 
-  def force(f: ForceState) =
-    copy(forces = forces.updated(f.getClass().getCanonicalName(), f))
-
+  def force(f: ForceState) = copy(forces = forces.updated(f.forceId, f))
 }
 
 object d3 {
@@ -123,4 +145,10 @@ object d3 {
   def forceX(): XForceState = XForceState()
 
   def forceY(): YForceState = YForceState()
+
+  def forceRadial(
+      radius: Node => Double,
+      x: Double = 0,
+      y: Double = 0
+  ): RadialForceState = RadialForceState(radius, point = Vec2f(0, 0))
 }

@@ -21,20 +21,21 @@ lazy val commonSettings = Seq(
   pomIncludeRepository := (_ ⇒ false),
 )
 
-lazy val root = project.in(file("./scalaD3Force")).settings(commonSettings)
+// Debugging is not available in scalajs mode, so i switch to this config when im debugging
+//lazy val root = project.in(file("./scalaD3Force")).settings(commonSettings)
 
-//lazy val root = project.in(file("."))
-//  .aggregate(scalaD3Force.js, scalaD3Force.jvm)
-//  .settings(commonSettings)
-//  .settings(
-//    publish / skip := true,
-//  )
-//
-//lazy val scalaD3Force = crossProject(JSPlatform, JVMPlatform)
-//  .withoutSuffixFor(JVMPlatform)
-//  .crossType(CrossType.Pure)
-//  .settings(commonSettings)
-//  .jsSettings(
-//    scalaJSLinkerConfig ~= (_.withModuleKind(ModuleKind.CommonJSModule).withSourceMap(false)),
-//    scalaJSUseMainModuleInitializer := true,
-//  )
+lazy val root = project.in(file("."))
+  .aggregate(scalaD3Force.js, scalaD3Force.jvm)
+  .settings(commonSettings)
+  .settings(
+    publish / skip := true,
+  )
+
+lazy val scalaD3Force = crossProject(JSPlatform, JVMPlatform)
+  .withoutSuffixFor(JVMPlatform)
+  .crossType(CrossType.Pure)
+  .settings(commonSettings)
+  .jsSettings(
+    scalaJSLinkerConfig ~= (_.withModuleKind(ModuleKind.CommonJSModule).withSourceMap(false)),
+    scalaJSUseMainModuleInitializer := true,
+  )

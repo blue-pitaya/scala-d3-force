@@ -12,6 +12,9 @@ case class Vec2f(val x: Double, val y: Double) {
   def jiggleIfZero =
     Vec2f(x = if (x == 0) Lcg.jiggle else x, y = if (y == 0) Lcg.jiggle else y)
 
+  def smallValueIfZero =
+    Vec2f(x = if (x == 0) 1e-6 else x, y = if (y == 0) 1e-6 else y)
+
   def floor = Vec2f(Math.floor(x), Math.floor(y))
 }
 
