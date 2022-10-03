@@ -119,13 +119,16 @@ case class SimulationState(
   def simulate(): IterationState = Simulation
     .simulate(_nodes, forcesSeq, settings)
 
+  def nextState(state: IterationState): IterationState = Simulation
+    .nextState(state, settings, forcesSeq)
+
   def nodes(v: Seq[Node]) = copy(_nodes = v)
   def alpha(v: Double) = copy(_alpha = v)
   def alphaMin(v: Double) = copy(settings = settings.copy(alphaMin = v))
   def alphaDecay(v: Double) = copy(settings = settings.copy(alphaDecay = v))
   def alphaTarget(v: Double) = copy(settings = settings.copy(alphaTarget = v))
   def velocityDecay(v: Double) =
-    copy(settings = settings.copy(velocityDecay = v))
+    copy(settings = settings.copy(velocityDecay = 1 - v))
 
   def force(f: ForceState) = copy(forces = forces.updated(f.forceId, f))
 }
