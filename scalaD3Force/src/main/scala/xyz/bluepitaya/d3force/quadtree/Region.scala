@@ -26,8 +26,8 @@ case class Region(p1: Vec2f, p2: Vec2f) {
 }
 
 object Region {
-  def square(x1: Double, x2: Double, a: Double): Region = {
-    val from = Vec2f(x1, x2)
+  def square(x: Double, y: Double, a: Double): Region = {
+    val from = Vec2f(x, y)
     Region(from, from + Vec2f(a, a))
   }
 }

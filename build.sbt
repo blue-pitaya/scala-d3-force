@@ -24,7 +24,7 @@ lazy val commonSettings = Seq(
 // Debugging is not available in scalajs mode, so i switch to this config when im debugging
 //lazy val root = project.in(file("./scalaD3Force")).settings(commonSettings)
 
-lazy val root = project.in(file("."))
+lazy val root = (project in file("."))
   .aggregate(scalaD3Force.js, scalaD3Force.jvm)
   .settings(commonSettings)
   .settings(
@@ -39,3 +39,20 @@ lazy val scalaD3Force = crossProject(JSPlatform, JVMPlatform)
     scalaJSLinkerConfig ~= (_.withModuleKind(ModuleKind.CommonJSModule).withSourceMap(false)),
     scalaJSUseMainModuleInitializer := true,
   )
+
+import org.scalajs.linker.interface.ESVersion
+import org.scalajs.linker.interface.OutputPatterns
+
+lazy val example = (project in file("example"))
+  .dependsOn(scalaD3Force.js)
+  .settings(
+    name := "example",
+    scalaVersion := "2.13.8",
+    scalaJSLinkerConfig ~= {
+      _.withModuleKind(ModuleKind.ESModule)
+      .withOutputPatterns(OutputPatterns.fromJSFile("%s.js"))
+      .withESFeatures(_.withESVersion(ESVersion.ES2021))
+    },
+    Compile / fastLinkJS / scalaJSLinkerOutputDirectory := baseDirectory.value / "ui/src/scalajs/target/",
+  )
+  .enablePlugins(ScalaJSPlugin)
