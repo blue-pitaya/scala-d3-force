@@ -21,7 +21,12 @@ object SimulationSettings {
   }
 }
 
-case class Node(id: String, pos: Vec2f, velocity: Vec2f = Vec2f.zero) {
+case class Node(
+    id: String,
+    pos: Vec2f,
+    velocity: Vec2f = Vec2f.zero,
+    isFixed: Boolean = false
+) {
   def move(velocityDecay: Double): Node = {
     val nextVelocity = velocity * velocityDecay;
     val nextPos = pos + nextVelocity
@@ -55,9 +60,11 @@ object Simulation {
         val force = forceFunctions.foldLeft(Force()) { (_force, getForce) =>
           _force + getForce(node)
         }
-        node.applyForce(force)
+        if (node.isFixed) node else node.applyForce(force)
       })
-      .map(_.move(settings.velocityDecay))
+      .map(node =>
+        if (node.isFixed) node else node.move(settings.velocityDecay)
+      )
     nextState.copy(nodes = nextNodes, alpha = nextAlpha)
   }
 

@@ -69,7 +69,8 @@ object QuadTreeOps {
     val h_exponent = if (_h > 1) Math.ceil(log2(_h)) else 0
     val w = Math.pow(2, w_exponent)
     val h = Math.pow(2, h_exponent)
-    Region(from.floor, (from + Vec2f(w, h)).floor)
+    val a = Math.max(w, h) // always add square region
+    Region(from.floor, (from + Vec2f(a, a)).floor)
   }
 
   def addAll[A, B](dataPoints: Seq[(Vec2f, A)]): QuadTree[A, B] = {

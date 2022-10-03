@@ -1,11 +1,11 @@
 package xyz.bluepitaya.d3force
 
 import xyz.bluepitaya.d3force.forces.CenterForce
-import xyz.bluepitaya.d3force.forces.PositionForce
 import xyz.bluepitaya.d3force.forces.Link
 import xyz.bluepitaya.d3force.forces.LinkForce
 import xyz.bluepitaya.d3force.forces.ManyBodyForce
 import xyz.bluepitaya.d3force.forces.RadialForce
+import xyz.bluepitaya.d3force.forces.AxisForce
 
 sealed trait ForceState {
   def forceId: String
@@ -62,7 +62,7 @@ case class XForceState(
 ) extends ForceState {
   override def forceId: String = "x"
   override def force: Force.Apply =
-    s => PositionForce.force(_strength, n => Vec2f(x(n), 0.0), s.alpha)
+    s => AxisForce.force(_strength, AxisForce.X, n => x(n), s.alpha)
 
   def strength(v: Double) = copy(_strength = _ => v)
   def strength(v: Node => Double) = copy(_strength = v)
@@ -76,7 +76,7 @@ case class YForceState(
 ) extends ForceState {
   override def forceId: String = "y"
   override def force: Force.Apply =
-    s => PositionForce.force(_strength, n => Vec2f(0.0, y(n)), s.alpha)
+    s => AxisForce.force(_strength, AxisForce.Y, n => y(n), s.alpha)
 
   def strength(v: Double) = copy(_strength = _ => v)
   def strength(v: Node => Double) = copy(_strength = v)

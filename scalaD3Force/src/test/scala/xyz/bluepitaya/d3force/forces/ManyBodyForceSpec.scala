@@ -88,7 +88,7 @@ class ManyBodyForceSpec extends AnyFlatSpec with Matchers {
       val expectedNodes = Seq(
         Node("a", Vec2f(-22.26228682613966, -19.630143363669756)),
         Node("b", Vec2f(14.235513838851318, 33.24834357099881)),
-        Node("c", Vec2f(24.811640517939132, -14.552029709055661))
+        Node("c", Vec2f(24.811640517939132, -14.55202970905566))
       )
 
       result.nodes.map(n => n.copy(velocity = Vec2f.zero)) shouldEqual
@@ -122,5 +122,31 @@ class ManyBodyForceSpec extends AnyFlatSpec with Matchers {
 
       result.nodes.map(n => n.copy(velocity = Vec2f.zero)) shouldEqual
         expectedNodes
+    }
+
+  "five points, one with fixed position, with theta 0.99 and charge -1000" should
+    "match original d3" in {
+      val nodes = Seq(
+        Node("a", pos = Vec2f.zero, isFixed = true),
+        Node("b", pos = Vec2f(-26, -6)),
+        Node("c", pos = Vec2f(-20, -31)),
+        Node("d", pos = Vec2f(-24, 3)),
+        Node("e", pos = Vec2f(-9, -6))
+      )
+
+      val result = d3
+        .forceSimulation(nodes)
+        .velocityDecay(0.1)
+        .force(d3.forceManyBody().theta(0.99).strength(-1000))
+        .tick(300)
+        .nodes
+
+      val expected = Seq(
+        Node("a", pos = Vec2f.zero, isFixed = true),
+        Node("b", pos = Vec2f(-2053.787279844109, -924.0358860564105)),
+        Node("c", pos = Vec2f(-148.95239174959636, -2110.081228076598)),
+        Node("d", pos = Vec2f(-867.0843019177397, 2283.2225612303987)),
+        Node("e", pos = Vec2f(1540.2507140446392, -671.8347162049947))
+      )
     }
 }
