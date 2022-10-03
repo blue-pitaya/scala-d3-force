@@ -2,6 +2,7 @@ package xyz.bluepitaya.d3force
 
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
+import xyz.bluepitaya.d3force.forces.Link
 
 class SimulationSpec extends AnyFlatSpec with Matchers {
   "simulation with different kinds of forces" should
@@ -29,4 +30,36 @@ class SimulationSpec extends AnyFlatSpec with Matchers {
 
       result.nodes.map(_.copy(velocity = Vec2f.zero)) shouldEqual expected
     }
+
+  // force center strength 10 is too big, and fricks whole system
+  "simulation" should "not raise stack overflow error" in {
+    val nodes = List(
+      Node("6J0X", Vec2f(0, 0), Vec2f(0, 0)),
+      Node("8UnP", Vec2f(0, 0), Vec2f(0, 0)),
+      Node("ps5c", Vec2f(0, 0), Vec2f(0, 0)),
+      Node("hxY6", Vec2f(0, 0), Vec2f(0, 0)),
+      Node("yXWl", Vec2f(0, 0), Vec2f(0, 0)),
+      Node("9W6V", Vec2f(0, 0), Vec2f(0, 0)),
+      Node("tiV0", Vec2f(0, 0), Vec2f(0, 0)),
+      Node("gNFh", Vec2f(0, 0), Vec2f(0, 0)),
+      Node("RUGq", Vec2f(0, 0), Vec2f(0, 0))
+    )
+    val links = List(
+      Link("9W6V", "gNFh"),
+      Link("ps5c", "hxY6"),
+      Link("gNFh", "RUGq"),
+      Link("9W6V", "tiV0"),
+      Link("6J0X", "9W6V"),
+      Link("6J0X", "8UnP"),
+      Link("6J0X", "ps5c"),
+      Link("ps5c", "yXWl")
+    )
+
+    val iterationState = d3
+      .forceSimulation(nodes)
+      .force(d3.forceLink(links).distance(0).strength(-0.01))
+      .force(d3.forceManyBody().strength(-5))
+      .force(d3.forceCenter().strength(10))
+      .tick(300)
+  }
 }
