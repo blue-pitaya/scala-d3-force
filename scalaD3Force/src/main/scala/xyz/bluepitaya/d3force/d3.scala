@@ -26,7 +26,7 @@ case class CenterForceState(point: Vec2f = Vec2f.zero, _strength: Double = 1.0)
 case class LinkForceState(
     _links: Seq[Link] = Seq(),
     _distance: Link => Double = _ => 30.0,
-    _strength: (Link, Seq[Link]) => Double = LinkForce.defaultStrength
+    _strength: Option[Link => Double] = None
 ) extends ForceState {
   override def forceId: String = "link"
   override def force: Force.Apply =
@@ -35,8 +35,8 @@ case class LinkForceState(
   def links(v: Seq[Link]) = copy(_links = v)
   def distance(v: Double) = copy(_distance = _ => v)
   def distance(v: Link => Double) = copy(_distance = v)
-  def strength(v: Double) = copy(_strength = (_, _) => v)
-  def strength(v: (Link, Seq[Link]) => Double) = copy(_strength = v)
+  def strength(v: Double) = copy(_strength = Some(_ => v))
+  def strength(v: Link => Double) = copy(_strength = Some(v))
 
   // def id() = ???
   // def iterations() = ???
