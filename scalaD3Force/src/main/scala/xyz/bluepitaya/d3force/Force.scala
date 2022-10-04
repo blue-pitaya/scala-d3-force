@@ -1,5 +1,7 @@
 package xyz.bluepitaya.d3force
 
+import xyz.bluepitaya.common.Vec2f
+
 case class Force(
     positionChange: Vec2f = Vec2f.zero,
     velocityChange: Vec2f = Vec2f.zero

@@ -2,6 +2,7 @@ package xyz.bluepitaya.d3force.forces
 
 import xyz.bluepitaya.d3force._
 import xyz.bluepitaya.d3force.quadtree._
+import xyz.bluepitaya.common.Vec2f
 
 object ManyBodyForce {
   case class Options(

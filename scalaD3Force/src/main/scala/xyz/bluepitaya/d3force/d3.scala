@@ -6,6 +6,8 @@ import xyz.bluepitaya.d3force.forces.LinkForce
 import xyz.bluepitaya.d3force.forces.ManyBodyForce
 import xyz.bluepitaya.d3force.forces.RadialForce
 import xyz.bluepitaya.d3force.forces.AxisForce
+import xyz.bluepitaya.common.Vec2f
+
 
 sealed trait ForceState {
   def forceId: String

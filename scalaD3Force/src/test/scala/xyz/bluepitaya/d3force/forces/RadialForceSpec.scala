@@ -5,7 +5,7 @@ import org.scalatest.matchers.should.Matchers
 import xyz.bluepitaya.d3force.ExampleData
 import xyz.bluepitaya.d3force.Lcg
 import xyz.bluepitaya.d3force.Node
-import xyz.bluepitaya.d3force.Vec2f
+import xyz.bluepitaya.common.Vec2f
 import xyz.bluepitaya.d3force.d3
 
 class RadialForceSpec extends AnyFlatSpec with Matchers {

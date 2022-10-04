@@ -7,7 +7,7 @@ import xyz.bluepitaya.d3force.ExampleData
 import xyz.bluepitaya.d3force.SimulationSettings
 import xyz.bluepitaya.d3force.d3
 import xyz.bluepitaya.d3force.Node
-import xyz.bluepitaya.d3force.Vec2f
+import xyz.bluepitaya.common.Vec2f
 
 class CenterForceSpec extends AnyFlatSpec with Matchers {
   "center force of random points" should "be the same as original d3" in {

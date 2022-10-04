@@ -3,6 +3,7 @@ package xyz.bluepitaya.d3force
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import xyz.bluepitaya.d3force.forces.Link
+import xyz.bluepitaya.common.Vec2f
 
 //TODO:
 class SimulationSpec extends AnyFlatSpec with Matchers {
@@ -62,8 +63,9 @@ class SimulationSpec extends AnyFlatSpec with Matchers {
 
       result
         .nodes
-        .map(n => n.copy(pos = n.pos.round, velocity = Vec2f.zero)) shouldEqual
-        expected
+        .map(n =>
+          n.copy(pos = n.pos.round(5), velocity = Vec2f.zero)
+        ) shouldEqual expected
     }
 
   //// force center strength 10 is too big, and fricks whole system

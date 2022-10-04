@@ -4,6 +4,7 @@ lazy val commonSettings = Seq(
   name := "scala-d3-force",
   version := "1.0",
   libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.13" % Test,
+  libraryDependencies += "xyz.bluepitaya" %% "common-utils" % "1.0",
   scalacOptions ++= Seq(
     "-deprecation",
     "-encoding",

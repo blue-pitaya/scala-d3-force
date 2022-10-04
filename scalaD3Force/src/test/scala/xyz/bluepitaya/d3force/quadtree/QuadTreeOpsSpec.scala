@@ -2,7 +2,7 @@ package xyz.bluepitaya.d3force.quadtree
 
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
-import xyz.bluepitaya.d3force.Vec2f
+import xyz.bluepitaya.common.Vec2f
 
 class QuadTreeOpsSpec extends AnyFlatSpec with Matchers {
   def sut = QuadTreeOps

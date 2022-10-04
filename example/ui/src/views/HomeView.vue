@@ -9,8 +9,12 @@ const nodes = data.nodes.map((n) => ({
   id: n.id,
   x: n.position.x,
   y: n.position.y,
+  fx: n.id == 0 ? 0 : undefined,
+  fy: n.id == 0 ? 0 : undefined,
 }));
 const links = data.links.map((x) => ({ source: x.source, target: x.target }));
+
+//console.log(data.nodes);
 
 const d3Nodes = ref([]);
 const d3Links = ref([]);
@@ -20,26 +24,29 @@ const myLinks = ref(data.links);
 
 const simulation = d3
   .forceSimulation(nodes)
+  .velocityDecay(0.1)
   .force(
     "link",
     d3
       .forceLink(links)
       .id((d) => d.id)
-      .distance(0)
-      .strength(0.5)
+      .distance(80)
   )
-  .force("charge", d3.forceManyBody().strength(-100))
-  .force("center", d3.forceCenter().strength(0.05))
-  .force("radial", d3.forceRadial().radius(50))
+  .force("charge", d3.forceManyBody().theta(0.99).strength(-1000))
+  .force("x", d3.forceX().strength(0.1))
+  .force("y", d3.forceY().strength(0.1))
+  .stop()
+  .tick(300)
   .on("tick", () => {
     const _nodes = simulation.nodes();
     d3Nodes.value = _nodes;
     d3Links.value = links;
     text.value = text.value + 1;
   });
+console.log("done");
 
 const dataLinks = myLinks.value.map((l) => {
-  console.log(l);
+  //console.log(l);
   const source = myNodes.value.find((n) => n.id == l.source);
   const target = myNodes.value.find((n) => n.id == l.target);
   return { ...l, noteFrom: source, noteTo: target };
@@ -49,7 +56,8 @@ const dataLinks = myLinks.value.map((l) => {
 <template>
   <div class="home">
     {{ text }}<br />
-    <svg id="svg1" ref="svgCont1" viewBox="-300 -300 600 600">
+    <svg id="svg1" ref="svgCont1" viewBox="-900 -900 1800 1800">
+      <circle r="10" :cx="0" :cy="0" fill="transparent" stroke="red" />
       <circle v-for="n in d3Nodes" :key="n.id" r="2" :cx="n.x" :cy="n.y" />
       <line
         v-for="l in d3Links"
@@ -60,7 +68,8 @@ const dataLinks = myLinks.value.map((l) => {
         stroke="gray"
       />
     </svg>
-    <svg id="svg2" ref="svgCont2" viewBox="-300 -300 600 600">
+    <svg id="svg2" ref="svgCont2" viewBox="-900 -900 1800 1800">
+      <circle r="10" :cx="0" :cy="0" fill="transparent" stroke="red" />
       <circle
         v-for="n in myNodes"
         :key="n.id"
@@ -82,8 +91,8 @@ const dataLinks = myLinks.value.map((l) => {
 
 <style scoped>
 svg {
-  width: 600px;
-  height: 600px;
+  width: 800px;
+  height: 800px;
   margin: 15px;
   border: 1px solid black;
 }
