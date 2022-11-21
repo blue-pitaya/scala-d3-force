@@ -62,4 +62,8 @@ class QuadTreeOpsSpec extends AnyFlatSpec with Matchers {
       sut.add(p._1, p._2, tree)
     }
   }
+
+  "addind empty list of points" should "not throw exception" in {
+    QuadTreeOps.addAll(Seq())
+  }
 }

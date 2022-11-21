@@ -61,8 +61,13 @@ object QuadTreeOps {
   private def getSize(points: Seq[Vec2f]): Region = {
     def log2(x: Double) = Math.log(x) / Math.log(2.0)
 
-    val from = Vec2f(points.map(_.x).min, points.map(_.y).min)
-    val to = Vec2f(points.map(_.x).max, points.map(_.y).max)
+    val minX = points.map(_.x).minOption.getOrElse(0.0)
+    val minY = points.map(_.y).minOption.getOrElse(0.0)
+    val maxX = points.map(_.x).maxOption.getOrElse(1.0)
+    val maxY = points.map(_.y).maxOption.getOrElse(1.0)
+
+    val from = Vec2f(minX, minY)
+    val to = Vec2f(maxX, maxY)
     val _w = Math.abs(to.x - from.x)
     val _h = Math.abs(to.y - from.y)
     val w_exponent = if (_w > 1) Math.ceil(log2(_w)) else 0
