@@ -7,7 +7,8 @@ case class SimulationSettings(
     alphaMin: Double,
     alphaDecay: Double,
     alphaTarget: Double,
-    velocityDecay: Double
+    velocityDecay: Double,
+    alphaChange: (Double, Double, Double) => Double
 )
 
 object SimulationSettings {
@@ -17,7 +18,8 @@ object SimulationSettings {
       alphaMin = alphaMin,
       alphaDecay = 1 - Math.pow(alphaMin, 1.0 / 300),
       alphaTarget = 0,
-      velocityDecay = 0.6
+      velocityDecay = 0.6,
+      alphaChange = (alpha, target, decay) => alpha + (target - alpha) * decay
     )
   }
 }
@@ -50,8 +52,8 @@ object Simulation {
       settings: SimulationSettings,
       forces: Seq[IterationState => Node => Force]
   ): IterationState = {
-    val nextAlpha =
-      state.alpha + (settings.alphaTarget - state.alpha) * settings.alphaDecay;
+    val nextAlpha = settings
+      .alphaChange(state.alpha, settings.alphaTarget, settings.alphaDecay)
     val nextState = state.copy(alpha = nextAlpha)
     val forceFunctions = forces.map(_(nextState))
 
@@ -68,6 +70,13 @@ object Simulation {
       )
     nextState.copy(nodes = nextNodes, alpha = nextAlpha)
   }
+
+  def nextStateAlphaAware(
+      state: IterationState,
+      settings: SimulationSettings,
+      forces: Seq[IterationState => Node => Force]
+  ): Option[IterationState] = Option
+    .when(state.alpha >= settings.alphaMin)(nextState(state, settings, forces))
 
   def simulateN(
       nodes: Seq[Node],

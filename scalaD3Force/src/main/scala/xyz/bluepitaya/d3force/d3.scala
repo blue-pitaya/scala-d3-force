@@ -7,7 +7,7 @@ import xyz.bluepitaya.d3force.forces.ManyBodyForce
 import xyz.bluepitaya.d3force.forces.RadialForce
 import xyz.bluepitaya.d3force.forces.AxisForce
 import xyz.bluepitaya.common.Vec2f
-
+import java.io.DataOutput
 
 sealed trait ForceState {
   def forceId: String
@@ -124,6 +124,9 @@ case class SimulationState(
   def nextState(state: IterationState): IterationState = Simulation
     .nextState(state, settings, forcesSeq)
 
+  def nextStateAlphaAware(state: IterationState): Option[IterationState] =
+    Simulation.nextStateAlphaAware(state, settings, forcesSeq)
+
   def nodes(v: Seq[Node]) = copy(_nodes = v)
   def alpha(v: Double) = copy(_alpha = v)
   def alphaMin(v: Double) = copy(settings = settings.copy(alphaMin = v))
@@ -131,6 +134,9 @@ case class SimulationState(
   def alphaTarget(v: Double) = copy(settings = settings.copy(alphaTarget = v))
   def velocityDecay(v: Double) =
     copy(settings = settings.copy(velocityDecay = 1 - v))
+
+  def alphaChangeFunction(v: (Double, Double, Double) => Double) =
+    copy(settings = settings.copy(alphaChange = v))
 
   def force(f: ForceState) = copy(forces = forces.updated(f.forceId, f))
 }
