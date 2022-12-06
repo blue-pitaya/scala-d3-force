@@ -15,15 +15,8 @@ Work in progress!
 # To run example
 
 ```
+sbt "project example" "clean" "fullLinkJS"
 cd example/ui
 yarn
 yarn dev
-```
-
-If you want to see result of changes of source code, you must rebuild example package. In root dir:
-
-```
-sbt
-project example
-fastLinkJS
 ```

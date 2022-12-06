@@ -1,4 +1,4 @@
-# General/scala
+# general/scala
 **/target/
 *.bloop
 *.metals
@@ -6,6 +6,7 @@
 *metals.sbt
 build/
 
-# Auto-generated from vue create
+# javascript
 node_modules
 **/dist/
+example/ui/scalad3force/
