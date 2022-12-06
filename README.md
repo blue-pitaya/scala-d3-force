@@ -11,3 +11,19 @@ Work in progress!
 - Collision
 - Radial force
 - Link force id and iterations methods
+
+# To run example
+
+```
+cd example/ui
+yarn
+yarn dev
+```
+
+If you want to see result of changes of source code, you must rebuild example package. In root dir:
+
+```
+sbt
+project example
+fastLinkJS
+```

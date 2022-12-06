@@ -53,6 +53,7 @@ lazy val example = (project in file("example"))
       .withOutputPatterns(OutputPatterns.fromJSFile("%s.js"))
       .withESFeatures(_.withESVersion(ESVersion.ES2021))
     },
-    Compile / fastLinkJS / scalaJSLinkerOutputDirectory := baseDirectory.value / "ui2/scalad3force/",
+    Compile / fastLinkJS / scalaJSLinkerOutputDirectory := baseDirectory.value / "ui/scalad3force/",
+    Compile / fullLinkJS / scalaJSLinkerOutputDirectory := baseDirectory.value / "ui/scalad3force/",
   )
   .enablePlugins(ScalaJSPlugin)
