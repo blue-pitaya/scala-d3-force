@@ -5,12 +5,12 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import xyz.bluepitaya.d3force.Lcg
 import xyz.bluepitaya.d3force.Node
-import xyz.bluepitaya.common.Vec2f
+import xyz.bluepitaya.d3force.Vec2f
 import xyz.bluepitaya.d3force.d3
 
 class LinkForceSpec extends AnyFlatSpec with Matchers {
   "link force of random points" should "be same as original d3" in {
-    Lcg.reset
+    Lcg.reset()
     val result = d3
       .forceSimulation(ExampleData.fiveClosePoints)
       .force(d3.forceLink(ExampleData.linksOfFiveClosePoints).distance(50.0))
@@ -28,7 +28,7 @@ class LinkForceSpec extends AnyFlatSpec with Matchers {
   }
 
   "points with invalid links" should "remain at same place" in {
-    Lcg.reset
+    Lcg.reset()
     val links = Seq(Link("xd", "lol"), Link("elo", "wtf"))
     val result = d3
       .forceSimulation(ExampleData.fiveClosePoints)

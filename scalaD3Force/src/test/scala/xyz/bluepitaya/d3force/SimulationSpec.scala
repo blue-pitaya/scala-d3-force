@@ -2,8 +2,7 @@ package xyz.bluepitaya.d3force
 
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
-import xyz.bluepitaya.d3force.forces.Link
-import xyz.bluepitaya.common.Vec2f
+import xyz.bluepitaya.d3force.Vec2f
 
 //TODO:
 class SimulationSpec extends AnyFlatSpec with Matchers {
@@ -11,7 +10,7 @@ class SimulationSpec extends AnyFlatSpec with Matchers {
   // this test must pass!
   "five points with theta 0.99 and charge -1000 with force X and Y" should
     "match original d3" in {
-      Lcg.reset
+      Lcg.reset()
       val nodes = Seq(
         Node("a", pos = Vec2f.zero, isFixed = true),
         Node("b", pos = Vec2f(-26, -6)),
@@ -42,7 +41,7 @@ class SimulationSpec extends AnyFlatSpec with Matchers {
 
   "simulation with different kinds of forces" should
     "behave as in original d3" in {
-      Lcg.reset
+      Lcg.reset()
       val nodes = ExampleData.fiveClosePoints
       val links = ExampleData.linksOfFiveClosePoints
       val result = d3

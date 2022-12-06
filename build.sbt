@@ -4,15 +4,14 @@ lazy val commonSettings = Seq(
   name := "scala-d3-force",
   version := "1.0",
   libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.13" % Test,
-  libraryDependencies += "xyz.bluepitaya" %% "common-utils" % "1.0",
   scalacOptions ++= Seq(
     "-deprecation",
+    "-Xlint",
     "-encoding",
     "UTF-8",
     "-feature",
     "-language:_",
     "-unchecked",
-    "-Xfatal-warnings"
   ),
   sourcesInBase := false,
 
@@ -54,6 +53,6 @@ lazy val example = (project in file("example"))
       .withOutputPatterns(OutputPatterns.fromJSFile("%s.js"))
       .withESFeatures(_.withESVersion(ESVersion.ES2021))
     },
-    Compile / fastLinkJS / scalaJSLinkerOutputDirectory := baseDirectory.value / "ui/src/scalajs/target/",
+    Compile / fastLinkJS / scalaJSLinkerOutputDirectory := baseDirectory.value / "ui2/scalad3force/",
   )
   .enablePlugins(ScalaJSPlugin)

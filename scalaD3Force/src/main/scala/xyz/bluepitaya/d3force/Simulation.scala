@@ -1,7 +1,6 @@
 package xyz.bluepitaya.d3force
 
-import xyz.bluepitaya.d3force.forces.Link
-import xyz.bluepitaya.common.Vec2f
+import xyz.bluepitaya.d3force.Vec2f
 
 case class SimulationSettings(
     alphaMin: Double,

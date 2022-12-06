@@ -2,12 +2,9 @@ package xyz.bluepitaya.d3force.forces
 
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
-import xyz.bluepitaya.d3force.IterationState
 import xyz.bluepitaya.d3force.Lcg
 import xyz.bluepitaya.d3force.Node
-import xyz.bluepitaya.d3force.Simulation
-import xyz.bluepitaya.d3force.SimulationSettings
-import xyz.bluepitaya.common.Vec2f
+import xyz.bluepitaya.d3force.Vec2f
 import xyz.bluepitaya.d3force.d3
 
 class ManyBodyForceSpec extends AnyFlatSpec with Matchers {
@@ -17,9 +14,8 @@ class ManyBodyForceSpec extends AnyFlatSpec with Matchers {
     .tick(n)
 
   "single point on (0,0)" should "remain in same place" in {
-    Lcg.reset
+    Lcg.reset()
     val nodes = Seq(Node("1", Vec2f(0, 0)))
-    val settings = SimulationSettings.default.copy(alphaMin = 0.9)
     val result = d3
       .forceSimulation(nodes)
       .alphaMin(0.9)
@@ -32,7 +28,7 @@ class ManyBodyForceSpec extends AnyFlatSpec with Matchers {
   }
 
   "two points on (0,0)" should "repulse each other on 1 tick" in {
-    Lcg.reset
+    Lcg.reset()
     val nodes = Seq(Node("a", Vec2f(0, 0)), Node("b", Vec2f(0, 0)))
     val result = getResult(nodes, 1)
 
@@ -46,7 +42,7 @@ class ManyBodyForceSpec extends AnyFlatSpec with Matchers {
   }
 
   "two points on (0,0)" should "repulse each other on 10 tick" in {
-    Lcg.reset
+    Lcg.reset()
     val nodes = Seq(Node("a", Vec2f(0, 0)), Node("b", Vec2f(0, 0)))
     val result = getResult(nodes, 10)
 
@@ -61,7 +57,7 @@ class ManyBodyForceSpec extends AnyFlatSpec with Matchers {
 
   "two close points on random positions" should
     "repulse each other on 10 tick" in {
-      Lcg.reset
+      Lcg.reset()
       val nodes =
         Seq(Node("a", Vec2f(-3.113, -7.41)), Node("b", Vec2f(9.81, 6.66)))
       val result = getResult(nodes, 10)
@@ -77,7 +73,7 @@ class ManyBodyForceSpec extends AnyFlatSpec with Matchers {
 
   "three close points on random positions" should
     "repulse each other on 10 tick" in {
-      Lcg.reset
+      Lcg.reset()
       val nodes = Seq(
         Node("a", Vec2f(-3.113, -7.41)),
         Node("b", Vec2f(9.81, 6.66)),
@@ -97,7 +93,7 @@ class ManyBodyForceSpec extends AnyFlatSpec with Matchers {
 
   "three close points on random positions with random parameters" should
     "repulse each other on 10 tick" in {
-      Lcg.reset
+      Lcg.reset()
       val nodes = Seq(
         Node("a", Vec2f(-3.113, -7.41)),
         Node("b", Vec2f(9.81, 6.66)),
@@ -148,5 +144,7 @@ class ManyBodyForceSpec extends AnyFlatSpec with Matchers {
         Node("d", pos = Vec2f(-867.0843019177397, 2283.2225612303987)),
         Node("e", pos = Vec2f(1540.2507140446392, -671.8347162049947))
       )
+
+      result shouldEqual expected
     }
 }

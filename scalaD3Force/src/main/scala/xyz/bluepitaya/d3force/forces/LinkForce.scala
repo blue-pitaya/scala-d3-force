@@ -1,7 +1,6 @@
 package xyz.bluepitaya.d3force.forces
 
 import xyz.bluepitaya.d3force._
-import xyz.bluepitaya.common.Vec2f
 
 case class Link(from: String, to: String)
 

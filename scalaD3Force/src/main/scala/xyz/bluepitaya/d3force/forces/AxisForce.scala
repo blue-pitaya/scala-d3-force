@@ -2,7 +2,7 @@ package xyz.bluepitaya.d3force.forces
 
 import xyz.bluepitaya.d3force.Force
 import xyz.bluepitaya.d3force.Node
-import xyz.bluepitaya.common.Vec2f
+import xyz.bluepitaya.d3force.Vec2f
 
 object AxisForce {
   sealed trait Axis

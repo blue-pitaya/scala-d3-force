@@ -1,6 +1,5 @@
 package xyz.bluepitaya.d3force.forces
 
-import xyz.bluepitaya.common.Vec2f
 import xyz.bluepitaya.d3force._
 
 object RadialForce {

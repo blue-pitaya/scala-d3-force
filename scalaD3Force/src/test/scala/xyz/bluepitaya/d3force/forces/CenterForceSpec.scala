@@ -4,14 +4,13 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import xyz.bluepitaya.d3force.Lcg
 import xyz.bluepitaya.d3force.ExampleData
-import xyz.bluepitaya.d3force.SimulationSettings
 import xyz.bluepitaya.d3force.d3
 import xyz.bluepitaya.d3force.Node
-import xyz.bluepitaya.common.Vec2f
+import xyz.bluepitaya.d3force.Vec2f
 
 class CenterForceSpec extends AnyFlatSpec with Matchers {
   "center force of random points" should "be the same as original d3" in {
-    Lcg.reset
+    Lcg.reset()
     val result = d3
       .forceSimulation(ExampleData.threeClosePoints)
       .force(d3.forceCenter().x(1.2).y(-1.2).strength(0.5))

@@ -2,7 +2,7 @@ package xyz.bluepitaya.d3force.quadtree
 
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
-import xyz.bluepitaya.common.Vec2f
+import xyz.bluepitaya.d3force.Vec2f
 
 class QuadTreeOpsSpec extends AnyFlatSpec with Matchers {
   def sut = QuadTreeOps
@@ -26,7 +26,6 @@ class QuadTreeOpsSpec extends AnyFlatSpec with Matchers {
   private def exampleQuadTree = QuadTree(exampleRegion, Some(node0))
 
   "adding example" should "be ok" in {
-    val tree = QuadTree(exampleRegion, None)
     val points = List(
       (Vec2f(40, 45), "A"),
       (Vec2f(15, 70), "B"),
