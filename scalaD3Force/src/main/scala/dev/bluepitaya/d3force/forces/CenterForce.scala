@@ -1,8 +1,8 @@
-package xyz.bluepitaya.d3force.forces
+package dev.bluepitaya.d3force.forces
 
-import xyz.bluepitaya.d3force.Vec2f
-import xyz.bluepitaya.d3force.Node
-import xyz.bluepitaya.d3force.Force
+import dev.bluepitaya.d3force.Vec2f
+import dev.bluepitaya.d3force.Node
+import dev.bluepitaya.d3force.Force
 
 object CenterForce {
   def force(point: Vec2f, strength: Double, nodes: Seq[Node]): Node => Force = {

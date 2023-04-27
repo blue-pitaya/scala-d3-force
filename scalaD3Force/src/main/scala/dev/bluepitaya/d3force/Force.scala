@@ -1,6 +1,6 @@
-package xyz.bluepitaya.d3force
+package dev.bluepitaya.d3force
 
-import xyz.bluepitaya.d3force.Vec2f
+import dev.bluepitaya.d3force.Vec2f
 
 case class Force(
     positionChange: Vec2f = Vec2f.zero,

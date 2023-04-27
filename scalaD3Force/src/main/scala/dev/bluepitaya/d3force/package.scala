@@ -1,4 +1,4 @@
-package xyz.bluepitaya
+package dev.bluepitaya
 
 package object d3force {
   implicit class Vec2fExtensions(v: Vec2f) {

@@ -1,8 +1,8 @@
-package xyz.bluepitaya.d3force
+package dev.bluepitaya.d3force
 
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
-import xyz.bluepitaya.d3force.Vec2f
+import dev.bluepitaya.d3force.Vec2f
 
 //TODO:
 class SimulationSpec extends AnyFlatSpec with Matchers {

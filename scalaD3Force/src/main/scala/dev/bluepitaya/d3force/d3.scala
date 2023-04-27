@@ -1,12 +1,12 @@
-package xyz.bluepitaya.d3force
+package dev.bluepitaya.d3force
 
-import xyz.bluepitaya.d3force.forces.CenterForce
-import xyz.bluepitaya.d3force.forces.Link
-import xyz.bluepitaya.d3force.forces.LinkForce
-import xyz.bluepitaya.d3force.forces.ManyBodyForce
-import xyz.bluepitaya.d3force.forces.RadialForce
-import xyz.bluepitaya.d3force.forces.AxisForce
-import xyz.bluepitaya.d3force.Vec2f
+import dev.bluepitaya.d3force.forces.CenterForce
+import dev.bluepitaya.d3force.forces.Link
+import dev.bluepitaya.d3force.forces.LinkForce
+import dev.bluepitaya.d3force.forces.ManyBodyForce
+import dev.bluepitaya.d3force.forces.RadialForce
+import dev.bluepitaya.d3force.forces.AxisForce
+import dev.bluepitaya.d3force.Vec2f
 
 sealed trait ForceState {
   def forceId: String

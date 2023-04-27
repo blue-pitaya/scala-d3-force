@@ -1,4 +1,4 @@
-package xyz.bluepitaya.d3force
+package dev.bluepitaya.d3force
 
 // https://en.wikipedia.org/wiki/Linear_congruential_generator#Parameters_in_common_use
 // d3 uses it as random

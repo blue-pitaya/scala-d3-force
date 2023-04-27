@@ -1,8 +1,8 @@
-package xyz.bluepitaya.d3force.forces
+package dev.bluepitaya.d3force.forces
 
-import xyz.bluepitaya.d3force.Force
-import xyz.bluepitaya.d3force.Node
-import xyz.bluepitaya.d3force.Vec2f
+import dev.bluepitaya.d3force.Force
+import dev.bluepitaya.d3force.Node
+import dev.bluepitaya.d3force.Vec2f
 
 object AxisForce {
   sealed trait Axis

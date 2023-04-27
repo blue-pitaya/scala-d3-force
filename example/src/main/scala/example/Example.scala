@@ -1,9 +1,9 @@
 package example
 
-import xyz.bluepitaya.d3force.Node
-import xyz.bluepitaya.d3force.Vec2f
-import xyz.bluepitaya.d3force.d3
-import xyz.bluepitaya.d3force.forces.Link
+import dev.bluepitaya.d3force.Node
+import dev.bluepitaya.d3force.Vec2f
+import dev.bluepitaya.d3force.d3
+import dev.bluepitaya.d3force.forces.Link
 
 import scala.scalajs.js
 import scala.scalajs.js.JSConverters._

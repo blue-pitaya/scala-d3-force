@@ -1,11 +1,11 @@
-package xyz.bluepitaya.d3force.forces
+package dev.bluepitaya.d3force.forces
 
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
-import xyz.bluepitaya.d3force.Lcg
-import xyz.bluepitaya.d3force.Node
-import xyz.bluepitaya.d3force.Vec2f
-import xyz.bluepitaya.d3force.d3
+import dev.bluepitaya.d3force.Lcg
+import dev.bluepitaya.d3force.Node
+import dev.bluepitaya.d3force.Vec2f
+import dev.bluepitaya.d3force.d3
 
 class ManyBodyForceSpec extends AnyFlatSpec with Matchers {
   def getResult(nodes: Seq[Node], n: Int) = d3

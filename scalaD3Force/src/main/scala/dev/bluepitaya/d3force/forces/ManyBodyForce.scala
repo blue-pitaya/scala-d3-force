@@ -1,7 +1,7 @@
-package xyz.bluepitaya.d3force.forces
+package dev.bluepitaya.d3force.forces
 
-import xyz.bluepitaya.d3force._
-import xyz.bluepitaya.d3force.quadtree._
+import dev.bluepitaya.d3force._
+import dev.bluepitaya.d3force.quadtree._
 
 object ManyBodyForce {
   case class Options(

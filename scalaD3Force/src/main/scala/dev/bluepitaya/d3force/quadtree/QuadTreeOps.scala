@@ -1,7 +1,7 @@
-package xyz.bluepitaya.d3force.quadtree
+package dev.bluepitaya.d3force.quadtree
 
-import xyz.bluepitaya.d3force.Vec2f
-import xyz.bluepitaya.d3force.Force
+import dev.bluepitaya.d3force.Vec2f
+import dev.bluepitaya.d3force.Force
 
 sealed trait Quadrant
 case object TopLeft extends Quadrant

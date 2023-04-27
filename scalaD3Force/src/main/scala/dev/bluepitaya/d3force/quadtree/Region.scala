@@ -1,6 +1,6 @@
-package xyz.bluepitaya.d3force.quadtree
+package dev.bluepitaya.d3force.quadtree
 
-import xyz.bluepitaya.d3force.Vec2f
+import dev.bluepitaya.d3force.Vec2f
 
 case class Region(p1: Vec2f, p2: Vec2f) {
   lazy val middle = p1 + ((p2 - p1) / 2)

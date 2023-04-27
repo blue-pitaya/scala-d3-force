@@ -1,7 +1,7 @@
-package xyz.bluepitaya.d3force
+package dev.bluepitaya.d3force
 
-import xyz.bluepitaya.d3force.forces.Link
-import xyz.bluepitaya.d3force.Vec2f
+import dev.bluepitaya.d3force.forces.Link
+import dev.bluepitaya.d3force.Vec2f
 
 object ExampleData {
   def threeClosePoints = Seq(

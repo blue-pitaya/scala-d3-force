@@ -1,6 +1,6 @@
-package xyz.bluepitaya.d3force.forces
+package dev.bluepitaya.d3force.forces
 
-import xyz.bluepitaya.d3force._
+import dev.bluepitaya.d3force._
 
 case class Link(from: String, to: String)
 

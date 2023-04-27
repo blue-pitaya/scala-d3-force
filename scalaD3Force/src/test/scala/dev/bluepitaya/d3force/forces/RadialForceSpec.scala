@@ -1,12 +1,12 @@
-package xyz.bluepitaya.d3force.forces
+package dev.bluepitaya.d3force.forces
 
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
-import xyz.bluepitaya.d3force.ExampleData
-import xyz.bluepitaya.d3force.Lcg
-import xyz.bluepitaya.d3force.Node
-import xyz.bluepitaya.d3force.Vec2f
-import xyz.bluepitaya.d3force.d3
+import dev.bluepitaya.d3force.ExampleData
+import dev.bluepitaya.d3force.Lcg
+import dev.bluepitaya.d3force.Node
+import dev.bluepitaya.d3force.Vec2f
+import dev.bluepitaya.d3force.d3
 
 class RadialForceSpec extends AnyFlatSpec with Matchers {
   "radial force of random points" should "be the same as original d3" in {

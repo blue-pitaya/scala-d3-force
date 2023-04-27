@@ -1,4 +1,4 @@
-package xyz.bluepitaya.d3force
+package dev.bluepitaya.d3force
 
 case class Vec2f(x: Double, y: Double) {
   def +(v: Vec2f) = Vec2f(x + v.x, y + v.y)
