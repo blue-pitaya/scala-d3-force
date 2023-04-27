@@ -46,6 +46,7 @@ lazy val scalaD3Force = crossProject(JSPlatform, JVMPlatform)
   .withoutSuffixFor(JVMPlatform)
   .crossType(CrossType.Pure)
   .settings(commonSettings)
+  .settings(publishSettings)
   .jsSettings(
     scalaJSLinkerConfig ~=
       (_.withModuleKind(ModuleKind.CommonJSModule).withSourceMap(false)),

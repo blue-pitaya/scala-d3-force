@@ -6,6 +6,20 @@ This module implements simulation of physical forces on particles just like in d
 
 Work in progress, but many things have been already implemented.
 
+## Instalation
+
+For scala 2.13
+
+```scala
+libraryDependencies += "dev.bluepitaya" %% "scala-d3-force" % "0.1"
+```
+
+For scala.js
+
+```scala
+libraryDependencies += "dev.bluepitaya" %%% "scala-d3-force" % "0.1"
+```
+
 ## Todo
 
 - Collision
